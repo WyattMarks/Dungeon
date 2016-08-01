@@ -1,34 +1,21 @@
 io.stdout:setvbuf("no")
-planet = require('src/planet')
-gravity = require('src/gravity')
-spawn = require('src/spawn')
-cam = require('src/cam')
-debug = require('src/debug')
-collision = require('src/collision')
-util = require('src/util')
-input = require("src/input")
+Dungeon = require("src/Dungeon")
+cam = require("src/cam")
 
 function love.load()
 	math.randomseed(os.time())
-	debug:load()
 	screenWidth, screenHeight = love.window.getMode()
+	Dungeon:generate()
 end
 
 function love.update(dt)
-	input:update(dt)
-	spawn:update(dt)
-	collision:update(dt)
-	gravity:update(dt)
-	cam:update(dt)
+	Dungeon:update(dt)
 end
 
 function love.draw()
 	cam:set()
-	spawn:draw()
-	gravity:draw()
+		Dungeon:draw()
 	cam:unset()
-	
-	debug:draw()
 end
 
 function love.wheelmoved(x,y) 
@@ -40,14 +27,7 @@ function love.mousemoved(x,y,dx,dy)
 end
 
 function love.keypressed(key)
-	input:keypressed(key)
-end
-
-function love.keyreleased(key)
-	input:keyreleased(key)
-end
-
-function input:callback(key, isBeingHeld)
-	debug:keypressed(key)
-	spawn:keypressed(key)
+	if key == "r" then
+		Dungeon:generate()
+	end
 end
