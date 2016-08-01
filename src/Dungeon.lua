@@ -8,14 +8,14 @@ kruskals = require("src/thirdparty/kruskals")
 local Dungeon = {}
 Dungeon.rooms = {}
 Dungeon.halls = {}
-Dungeon.maxRooms = 150
-Dungeon.mapWidth = 120
-Dungeon.mapHeight = 60
-Dungeon.minSpread = 25
-Dungeon.maxSpread = 350
-Dungeon.roomSizeThreshold = .8
-Dungeon.minRooms = 5
-Dungeon.edgeAddBack = .15
+Dungeon.maxRooms = 150 --Max rooms that would generate (Only would realistically get this many with a HUGE spread)
+Dungeon.mapWidth = 120 --Ellipse x axis
+Dungeon.mapHeight = 60 --Ellipse y axis 
+Dungeon.minSpread = 25 --The minimum amount the room qill move outward
+Dungeon.maxSpread = 350 --Maximum of ^
+Dungeon.roomSizeThreshold = .8 --The percentage of the average size that a room must be to keep it
+Dungeon.minRooms = 5 --The minimum number of rooms in the dungeon
+Dungeon.edgeAddBack = .15 --Adding back hallways for a better traversal
 
 function Dungeon:generate()
 	self.rooms = {}
@@ -56,21 +56,18 @@ function Dungeon:generateHalls()
 		local hallX, hallY = 0,0
 		local hallW, hallH = 1,1
 		local generated = false
-		local lShaped = false
 
-		if yDistance < topRoom.height * tile.tileSize then
+		if yDistance < topRoom.height * tile.tileSize then --If it is possible to make just a horizontal hallway
 			local y = util:roundMultiple(math.random(yDistance + topRoom.y, topRoom.y + topRoom.height * tile.tileSize), tile.tileSize)
 			local x = leftRoom.x + leftRoom.width * tile.tileSize
 			local h = 1
 			local w = (rightRoom.x - (leftRoom.x + leftRoom.width * tile.tileSize))/tile.tileSize
 			self.halls[#self.halls+1] = hall:new(#self.halls + 1, x, y, w, h)
 			generated = true
-		else
-			lShaped = true
 		end
 
 		if not generated then
-			if xDistance < leftRoom.width * tile.tileSize then
+			if xDistance < leftRoom.width * tile.tileSize then --Possible to just be a vertical hall?
 				hallX = util:roundMultiple(math.random(xDistance + leftRoom.x, leftRoom.x + leftRoom.width * tile.tileSize), tile.tileSize)
 				hallY = topRoom.y + topRoom.height * tile.tileSize
 				hallW = 1
@@ -80,7 +77,7 @@ function Dungeon:generateHalls()
 			end
 		end
 
-		if lShaped and not generated then
+		if not generated then --Must be a L shape then
 			local y = topRoom.y + topRoom.height * tile.tileSize - math.random(1,room.minHeight) * tile.tileSize
 			local x = leftRoom.x + leftRoom.width * tile.tileSize
 			local h = 1
