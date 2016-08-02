@@ -73,15 +73,15 @@ function game:getLocalPlayer()
 end
 
 function game:draw()
-	if not self.map.lightWorld then return end
+	--if not self.map.lightWorld then return end
 	camera:attach()
 
-	self.map.lightWorld:draw(function()
+	--self.map.lightWorld:draw(function()
 		self.map:draw()
 		for k,v in pairs(self.players) do
 			v:draw()
 		end
-	end)
+	--end)
 
 	camera:detach()
 

@@ -14,8 +14,8 @@ end
 
 function player:update(dt)
 	if game.map.lightWorld and not self.light then 
-		self.light = game.map.lightWorld:newLight(self.x + self.width/2, self.y+self.height/2, 100, 140, 180, 300)
-		self.light:setGlowStrength(0.3)
+		--self.light = game.map.lightWorld:newLight(self.x + self.width/2, self.y+self.height/2, 100, 140, 180, 300)
+		--self.light:setGlowStrength(0.3)
 	end
 
 	local xMove, yMove = self.x, self.y

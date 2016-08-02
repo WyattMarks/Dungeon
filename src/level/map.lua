@@ -75,13 +75,13 @@ function map:generate()
 	self.height = #self.tiles[2]
 	self.spawnRoom = self.rooms[math.random(1,#self.rooms)]
 	self.loaded = true
-	self:generateLightWorld()
+	--self:generateLightWorld()
 end
 
 function map:update(dt)
 	if self.lightWorld then
-		self.lightWorld:setTranslation(-camera.x + love.graphics.getWidth()/2, -camera.y + love.graphics.getHeight()/2)
-		self.lightWorld:update(dt)
+		--self.lightWorld:setTranslation(-camera.x + love.graphics.getWidth()/2, -camera.y + love.graphics.getHeight()/2)
+		--self.lightWorld:update(dt)
 	end
 end
 
@@ -159,7 +159,7 @@ function map:loadFromNetworkedMap(toLoad)
 	end
 
 	self.loaded = true
-	self:generateLightWorld()
+	--self:generateLightWorld()
 end
 
 function map:generateLightWorld()
