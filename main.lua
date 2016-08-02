@@ -1,33 +1,38 @@
 io.stdout:setvbuf("no")
-Dungeon = require("src/Dungeon")
-cam = require("src/cam")
+game = require("src/game")
+bump = require("src/thirdparty/bump")
+require("src/thirdparty/Tserial")
+settings = require("src/settings")
+server = require("src/network/server")
+client = require("src/network/client")
+require("enet")
+bind = require("src/input/bind")
 
 function love.load()
 	math.randomseed(os.time())
 	screenWidth, screenHeight = love.window.getMode()
-	Dungeon:generate()
+	server:load()
+	game:load()
+	client:load()
 end
 
 function love.update(dt)
-	Dungeon:update(dt)
+	game:update(dt)
+	if server.hosting then
+		server:update(dt)
+	end
+	client:update(dt)
 end
 
 function love.draw()
-	cam:set()
-		Dungeon:draw()
-	cam:unset()
+	game:draw()
 end
 
-function love.wheelmoved(x,y) 
-	cam:wheelmoved(x,y)
-end
-
-function love.mousemoved(x,y,dx,dy)
-	cam:mousemoved(x,y,dx,dy)
-end
 
 function love.keypressed(key)
-	if key == "r" then
-		Dungeon:generate()
-	end
+	bind:keypressed(key)
+end
+
+function love.keyreleased(key)
+	bind:keyreleased(key)
 end

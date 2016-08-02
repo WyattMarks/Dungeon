@@ -1,7 +1,7 @@
-tile = require("src/tile")
+tile = require("src/level/tile")
 util = require("src/util")
-room = require("src/room")
-hall = require("src/hall")
+room = require("src/level/room")
+hall = require("src/level/hall")
 delauney = require("src/thirdparty/delauney")
 kruskals = require("src/thirdparty/kruskals")
 
@@ -11,8 +11,8 @@ Dungeon.halls = {}
 Dungeon.maxRooms = 150 --Max rooms that would generate (Only would realistically get this many with a HUGE spread)
 Dungeon.mapWidth = 120 --Ellipse x axis
 Dungeon.mapHeight = 60 --Ellipse y axis 
-Dungeon.minSpread = 25 --The minimum amount the room qill move outward
-Dungeon.maxSpread = 350 --Maximum of ^
+Dungeon.minSpread = 200 --The minimum amount the room qill move outward
+Dungeon.maxSpread = 2000 --Maximum of ^
 Dungeon.roomSizeThreshold = .8 --The percentage of the average size that a room must be to keep it
 Dungeon.minRooms = 5 --The minimum number of rooms in the dungeon
 Dungeon.edgeAddBack = .15 --Adding back hallways for a better traversal
