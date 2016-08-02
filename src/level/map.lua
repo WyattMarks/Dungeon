@@ -105,6 +105,9 @@ end
 function map:loadFromNetworkedMap(toLoad)
 	toLoad = Tserial.unpack(toLoad)
 
+	self.width = toLoad.width
+	self.height = toLoad.height
+
 	for x=1, toLoad.width do
 		if not self.tiles[x] then self.tiles[x] = {} end
 		for y=1, toLoad.height do
@@ -174,8 +177,7 @@ function map:generateLightWorld()
 		end
 	end
 
-	self.lightWorld.l = -camera.x + love.graphics.getWidth()/2
-    self.lightWorld.t = -camera.y + love.graphics.getHeight()/2
+	self.lightWorld:setTranslation(-camera.x + love.graphics.getWidth()/2, -camera.y + love.graphics.getHeight()/2)
 end
 
 
