@@ -75,10 +75,14 @@ function map:generate()
 	self.height = #self.tiles[2]
 	self.spawnRoom = self.rooms[math.random(1,#self.rooms)]
 	self.loaded = true
+	self:generateLightWorld()
 end
 
 function map:update(dt)
-
+	if self.lightWorld then
+		self.lightWorld:setTranslation(-camera.x + love.graphics.getWidth()/2, -camera.y + love.graphics.getHeight()/2)
+		self.lightWorld:update(dt)
+	end
 end
 
 function map:draw()
@@ -152,6 +156,26 @@ function map:loadFromNetworkedMap(toLoad)
 	end
 
 	self.loaded = true
+	self:generateLightWorld()
+end
+
+function map:generateLightWorld()
+	self.lightWorld = LightWorld({
+		ambient = {10,10,10},
+	})
+
+	self.lightWorld.rectangles = {}
+
+	for x=1, self.width do
+		for y=1, self.height do
+			if self.tiles[x][y].type == "brick" then
+				table.insert(self.lightWorld.rectangles, self.lightWorld:newRectangle(x*tile.tileSize + tile.tileSize/2, y*tile.tileSize + tile.tileSize/2, tile.tileSize, tile.tileSize))
+			end
+		end
+	end
+
+	self.lightWorld.l = -camera.x + love.graphics.getWidth()/2
+    self.lightWorld.t = -camera.y + love.graphics.getHeight()/2
 end
 
 

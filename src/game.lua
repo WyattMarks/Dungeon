@@ -1,5 +1,6 @@
 Player = require("src/player")
 Camera = require("src/thirdparty/camera")
+LightWorld = require("src/thirdparty/light")
 local game = {}
 game.map = {}
 game.players = {}
@@ -11,13 +12,13 @@ function game:load()
 	self.bindings:load()
 	self.map = require("src/level/map")
 
+	camera = Camera(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
+	camera:zoom(2)
+
 	self.map:load()
 	if server.hosting then
 		self.map:generate()
 	end
-
-	camera = Camera(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
-	camera:zoom(2)
 
 	self:addPlayer(self.name..tostring(math.random(0,10)), true)
 	camera:lookAt(self:getLocalPlayer().x, self:getLocalPlayer().y)
@@ -72,16 +73,20 @@ function game:getLocalPlayer()
 end
 
 function game:draw()
+	if not self.map.lightWorld then return end
 	camera:attach()
+
+	self.map.lightWorld:draw(function()
 		self.map:draw()
 		for k,v in pairs(self.players) do
 			v:draw()
 		end
+	end)
 
 	camera:detach()
 
 	love.graphics.setColor(255,255,255)
-	love.graphics.print(tostring(self.totalTime), 10, 10)
+	love.graphics.print(tostring(love.timer.getFPS()), 10, 10)
 end
 
 function game:update(dt)

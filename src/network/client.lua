@@ -90,7 +90,6 @@ function client:update(dt)
 end
 
 function client:playerJoin(data)
-	print(data[1], "joined!")
 	local name = data[1]
 	local x = data[2]
 	local y = data[3]
@@ -108,7 +107,6 @@ function client:playerJoin(data)
 	player.x = tonumber(x)
 	player.y = tonumber(y)
 	world:update(player, tonumber(x), tonumber(y))
-	print(player.peer)
 end
 
 
