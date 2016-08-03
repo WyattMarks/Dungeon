@@ -9,13 +9,13 @@ enemy.bulletSpeed = 200
 enemy.type = "enemy"
 
 function enemy:new(id, x, y)
-    local new = util:copyTable(self)
-    new.id = id
-    new.x = x
-    new.y = y
-    world:add(new, new.x, new.y, new.width, new.height)
+	local new = util:copyTable(self)
+	new.id = id
+	new.x = x
+	new.y = y
+	world:add(new, new.x, new.y, new.width, new.height)
 
-    return new
+	return new
 end
 
 function enemy:filter(other)
@@ -28,11 +28,11 @@ end
 
 
 function enemy:update(dt)
-    
+	
 end
 
 function enemy:die()
-    world:remove(self)
+	world:remove(self)
 	for k,v in pairs(game.enemies) do
 		if v == self then 
 			game.enemies[k] = nil
@@ -41,7 +41,7 @@ function enemy:die()
 end
 
 function enemy:draw()
-    love.graphics.setColor(205,50,50)
+	love.graphics.setColor(205,50,50)
 	love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
 
 	love.graphics.setColor(205,50,50)

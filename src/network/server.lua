@@ -107,6 +107,7 @@ end
 
 function server:shoot(hit, bullet)
 	if hit.type == "player" or hit.type == "enemy" then
+
 		hit.health = math.max(0, hit.health - 10)
 		if hit.health == 0 then
 			if hit.type == "enemy" then
