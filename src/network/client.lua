@@ -124,13 +124,17 @@ end
 
 function client:bullet(data)
 	data = Tserial.unpack(data)
-	local name = data.name
+	local id = data.id
 	local x = data.x
 	local y = data.y
 	local xvel = data.xvel
 	local yvel = data.yvel
 
-	table.insert(game.bullets, bullet:spawn(game:getPlayer(name), x, y, xvel, yvel))
+	if game:getPlayer(id) then
+		table.insert(game.bullets, bullet:spawn(game:getPlayer(id), x, y, xvel, yvel))
+	else
+		table.insert(game.bullets, bullet:spawn(game.enemies[id], x, y, xvel, yvel))
+	end
 end
 
 function client:entityJoin(data)

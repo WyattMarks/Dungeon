@@ -4,9 +4,11 @@ enemy.y = 0
 enemy.width = 15
 enemy.height = 20
 enemy.health = 100
-enemy.speed = 96
+enemy.speed = 48
 enemy.bulletSpeed = 200
+enemy.fireRate = 1
 enemy.type = "enemy"
+
 
 function enemy:new(id, x, y)
 	local new = util:copyTable(self)
@@ -26,9 +28,78 @@ function enemy:filter(other)
 	end
 end
 
+function enemy:canSee(player)
+	local function filter(e, other)
+		if other.type == "brick" then
+			return "slide"
+		end
+		return false
+	end
+
+	local x, y, cols, len = world:check(self, player.x, player.y, filter)
+
+	return len == 0
+end
+
+function enemy:shoot(x, y)
+	local eX, eY = self.x + self.width / 2 - bullet.width / 2, self.y + self.height / 2 - bullet.height / 2
+	local angle = math.atan2(x - eX, y - eY)
+    local xvel = self.bulletSpeed * math.sin(angle)
+    local yvel = self.bulletSpeed * math.cos(angle)
+
+	local toSend = {id = self.id, x = eX, y = eY, xvel = xvel, yvel = yvel}
+	server:broadcast("SHOOT"..Tserial.pack(toSend, false, false))
+end
 
 function enemy:update(dt)
-	
+
+	if server.hosting then
+		self.lastShoot = (self.lastShoot or 0) + dt
+		self.timer = (self.timer or 0) - dt
+
+		if self.timer <= 0 then
+			local nextMoveDur = math.random(1,4)
+			self.timer = nextMoveDur
+
+			self.right = math.random(1,4) == 1
+			self.left = math.random(1,4) == 1
+			self.up = math.random(1,4) == 1
+			self.down = math.random(1,4) == 1
+		end
+
+		if self.lastShoot > self.fireRate then
+			self.lastShoot = self.lastShoot - math.random(self.fireRate-self.fireRate/2, self.fireRate+self.fireRate/2)
+
+			for k,v in pairs(game.players) do
+				if self:canSee(v) then
+					self:shoot(v.x + v.width / 2, v.y + v.height / 2)
+					break
+				end
+			end
+		end
+
+
+		local xMove, yMove = self.x, self.y
+		if self.right then
+			xMove = xMove + self.speed * dt
+		elseif self.left then
+			xMove = xMove - self.speed * dt
+		else
+			self.xvel = 0
+		end
+
+		if self.up then
+			yMove = yMove - self.speed * dt
+			self.yvel = -self.speed
+		elseif self.down then
+			yMove = yMove + self.speed * dt
+			self.yvel = self.speed
+		else
+			self.yvel = 0
+		end
+
+		self.x, self.y, cols, len = world:move(self, xMove, yMove, self.filter)
+	end
 end
 
 function enemy:die()

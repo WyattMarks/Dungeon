@@ -100,7 +100,7 @@ function server:bullet(data, peer)
 
 	if not player then return end
 
-	data.name = player.name
+	data.id = player.name
 
 	self:broadcast("SHOOT"..Tserial.pack(data, false, false))
 end
