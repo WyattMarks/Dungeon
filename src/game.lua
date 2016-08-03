@@ -106,6 +106,9 @@ function game:draw()
 	love.graphics.setColor(255,255,255)
 
 	love.graphics.print(tostring(love.timer.getFPS()), 10, 10)
+
+	local player = game:getLocalPlayer()
+	love.graphics.print(tostring(math.floor(player.x / tile.tileSize))..","..tostring(math.floor(player.y/tile.tileSize)), 10, 22)
 end
 
 function game:update(dt)

@@ -80,8 +80,8 @@ end
 
 function map:update(dt)
 	if self.lightWorld then
-		--self.lightWorld:setTranslation(-camera.x + love.graphics.getWidth()/2, -camera.y + love.graphics.getHeight()/2)
-		--self.lightWorld:update(dt)
+		self.lightWorld:setTranslation(-camera.x + love.graphics.getWidth()/2, -camera.y + love.graphics.getHeight()/2,1.2)
+		self.lightWorld:update(dt)
 	end
 end
 
@@ -170,14 +170,34 @@ function map:generateLightWorld()
 	self.lightWorld.rectangles = {}
 
 	for x=1, self.width do
+		local rectangle = {}
 		for y=1, self.height do
 			if self.tiles[x][y].type == "brick" then
-				table.insert(self.lightWorld.rectangles, self.lightWorld:newRectangle(x*tile.tileSize + tile.tileSize/2, y*tile.tileSize + tile.tileSize/2, tile.tileSize, tile.tileSize))
+				if not rectangle.y then
+					rectangle.y = y
+					rectangle.height = 1
+				else
+					rectangle.height = rectangle.height + 1
+				end
+			else
+				if rectangle.y then
+					local rX = x*tile.tileSize + tile.tileSize/2
+					local rY = rectangle.y * tile.tileSize + rectangle.height / 2 * tile.tileSize
+					table.insert(self.lightWorld.rectangles, self.lightWorld:newRectangle(rX, rY, tile.tileSize, tile.tileSize*rectangle.height))
+					rectangle = {}
+				end
 			end
+		end
+
+		if rectangle.y then
+			local rX = x*tile.tileSize + tile.tileSize/2
+			local rY = rectangle.y * tile.tileSize + rectangle.height / 2 * tile.tileSize
+			table.insert(self.lightWorld.rectangles, self.lightWorld:newRectangle(rX, rY, tile.tileSize, tile.tileSize*rectangle.height))
+			rectangle = {}
 		end
 	end
 
-	self.lightWorld:setTranslation(-camera.x + love.graphics.getWidth()/2, -camera.y + love.graphics.getHeight()/2)
+	self.lightWorld:setTranslation(-camera.x + love.graphics.getWidth()/2, -camera.y + love.graphics.getHeight()/2,1.2)
 end
 
 
