@@ -32,5 +32,9 @@ function util:rectangleCollision(rect1, rect2)
 	return not (rect2.x > rect1.x + rect1.width * tile.tileSize or rect2.x + rect2.width * tile.tileSize < rect1.x or rect2.y > rect1.y + rect1.height * tile.tileSize or rect2.y + rect2.height * tile.tileSize < rect1.y)	
 end
 
+function util:distance(x,y,x2,y2)
+	return math.sqrt( (x-x2)^2 + (y-y2)^2 )
+end
+
 
 return util;

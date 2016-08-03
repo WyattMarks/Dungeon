@@ -70,9 +70,18 @@ function enemy:update(dt)
 		if self.lastShoot > self.fireRate then
 			self.lastShoot = self.lastShoot - math.random(self.fireRate-self.fireRate/2, self.fireRate+self.fireRate/2)
 
+			local players = {}
 			for k,v in pairs(game.players) do
-				if self:canSee(v) then
-					self:shoot(v.x + v.width / 2, v.y + v.height / 2)
+				players[#players+1] = {util:distance(self.x, self.y, v.x, v.y), v}
+			end
+
+			table.sort(players, function( b, a ) return a[1] > b[1] end)
+
+			for i=1, #players do
+				local player = players[i][2]
+
+				if self:canSee(player) then
+					self:shoot(player.x + player.width / 2, player.y + player.height / 2)
 					break
 				end
 			end
