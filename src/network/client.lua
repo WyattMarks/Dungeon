@@ -155,7 +155,7 @@ function client:entityJoin(data)
 		player.x = tonumber(x)
 		player.y = tonumber(y)
 		world:update(player, tonumber(x), tonumber(y))
-	elseif type == "enemy" then
+	elseif type == "enemy" and not server.hosting then
 		local enemy = enemy:new(id, x, y)
 		enemy.health = health
 		game.enemies[id] = enemy
