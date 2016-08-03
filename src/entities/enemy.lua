@@ -8,7 +8,7 @@ enemy.speed = 48
 enemy.bulletSpeed = 200
 enemy.fireRate = 1
 enemy.type = "enemy"
-
+enemy.range = 300
 
 function enemy:new(id, x, y)
 	local new = util:copyTable(self)
@@ -80,7 +80,7 @@ function enemy:update(dt)
 			for i=1, #players do
 				local player = players[i][2]
 
-				if self:canSee(player) then
+				if self:canSee(player) and players[i][1] < self.range then
 					self:shoot(player.x + player.width / 2, player.y + player.height / 2)
 					break
 				end
