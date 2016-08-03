@@ -23,7 +23,7 @@ function bullet:spawn(owner,x,y,xvel,yvel)
 end 
 
 function bullet:filter(other)
-	if self.owner == other or other.owner == self.owner then
+	if self.owner == other or self.type == other.type then
 		return false
 	else
 		return "slide"
