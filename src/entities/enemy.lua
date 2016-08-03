@@ -47,7 +47,13 @@ function enemy:shoot(x, y)
     local xvel = self.bulletSpeed * math.sin(angle)
     local yvel = self.bulletSpeed * math.cos(angle)
 
-	local toSend = {id = self.id, x = eX, y = eY, xvel = xvel, yvel = yvel}
+	local toSend = {owner = self.id, x = eX, y = eY, xvel = xvel, yvel = yvel}
+
+	local bullet = bullet:spawn(#game.entities + 1, game:getLocalPlayer(), 0, 0, 0, 0) --Placeholder bullet
+	toSend.id = bullet.id
+
+	table.insert(game.entities, bullet)
+
 	server:broadcast("SHOOT"..Tserial.pack(toSend, false, false))
 end
 
@@ -71,8 +77,10 @@ function enemy:update(dt)
 			self.lastShoot = self.lastShoot - math.random(self.fireRate-self.fireRate/2, self.fireRate+self.fireRate/2)
 
 			local players = {}
-			for k,v in pairs(game.players) do
-				players[#players+1] = {util:distance(self.x, self.y, v.x, v.y), v}
+			for k,v in pairs(game.entities) do
+				if v.type == "player" then
+					players[#players+1] = {util:distance(self.x, self.y, v.x, v.y), v}
+				end 
 			end
 
 			table.sort(players, function( b, a ) return a[1] > b[1] end)

@@ -70,7 +70,7 @@ function player:shoot(x, y)
 		yvel = yvel + self.yvel
 	end
 
-	local toSend = {x = pX, y = pY, xvel = xvel, yvel = yvel}
+	local toSend = {owner = self.id, x = pX, y = pY, xvel = xvel, yvel = yvel}
 	client:send("SHOOT"..Tserial.pack(toSend, false, false))
 end
 

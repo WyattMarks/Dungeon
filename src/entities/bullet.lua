@@ -7,15 +7,14 @@ bullet.width = 5
 bullet.height = 5
 bullet.type = "bullet"
 
-function bullet:spawn(owner,x,y,xvel,yvel)
+function bullet:spawn(id,owner,x,y,xvel,yvel)
 	local new = util:copyTable(self)
 	new.x = x
 	new.y = y
 	new.xvel = xvel
 	new.yvel = yvel
 	new.owner = owner
-	game.bulletsFired = game.bulletsFired + 1
-	new.id = game.bulletsFired
+	new.id = id
 
 	world:add(new, new.x, new.y, new.width, new.height)
 
@@ -48,9 +47,9 @@ function bullet:update(dt)
 
 		if i == 1 then
 			world:remove(self)
-			for k,v in pairs(game.bullets) do
+			for k,v in pairs(game.entities) do
 				if v == self then 
-					game.bullets[k] = nil
+					game.entities[k] = nil
 				end
 			end
 

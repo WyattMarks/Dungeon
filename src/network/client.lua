@@ -28,27 +28,26 @@ function client:updateEntityInfo(data)
 	data = Tserial.unpack(data)
 	local player = game:getLocalPlayer()
 
-	for id, info in pairs(data) do
-		local type = info[1]
+	for k, entity in pairs(data) do
 
-		if type == "player" then
-			if id ~= player.name then
-				local ply = game:getPlayer(id)
+		if entity.type == "player" then
+			if entity.name ~= player.name then
+				local ply = game:getEntity(entity.id)
 				if ply then
-					ply.x = info[2]
-					ply.y = info[3]
-					ply.health = info[4]
+					for k,v in pairs(entity) do
+						ply[k] = v
+					end
 					world:update(ply, ply.x, ply.y)
 				end
 			else
-				player.health = info[4]
+				player.health = entity.health
 			end
 		elseif type == "enemy" then
 			local enemy = game.enemies[id]
 			if enemy then
-				enemy.x = info[2]
-				enemy.y = info[3]
-				enemy.health = info[4]
+				for k,v in pairs(entity) do
+					enemy[k] = v
+				end
 				world:update(enemy, enemy.x, enemy.y)
 			end
 		end
@@ -123,46 +122,58 @@ function client:kill(data)
 end
 
 function client:bullet(data)
-	data = Tserial.unpack(data)
-	local id = data.id
-	local x = data.x
-	local y = data.y
-	local xvel = data.xvel
-	local yvel = data.yvel
+	local entity = Tserial.unpack(data)
 
-	if game:getPlayer(id) then
-		table.insert(game.bullets, bullet:spawn(game:getPlayer(id), x, y, xvel, yvel))
+	local b = game:getEntity(entity.id)
+
+	if b then
+		for k,v in pairs(entity) do
+			b[k] = v
+		end
+		b.owner = game:getEntity(b.owner)
+		world:update(b, b.x, b.y)
 	else
-		table.insert(game.bullets, bullet:spawn(game.enemies[id], x, y, xvel, yvel))
+		table.insert(game.entities, bullet:spawn(entity.id, game:getEntity(entity.owner), entity.x, entity.y, entity.xvel, entity.yvel))
 	end
+
+	--print(entity.id)
 end
 
-function client:entityJoin(data)
-	local type = data[1]
-	local id = data[2]
-	local x = data[3]
-	local y = data[4]
-	local health = data[5]
+function client:entityJoin(entity)
+
+--	print(entity.id, entity.type, entity.name)
 
 
-	if type == "player" then				
+	if entity.type == "player" then				
 		local player = game:getLocalPlayer()
-		if id == player.name then
-			player.x = x
-			player.y = y
-			world:update(player, x, y)
+		if entity.name == player.name then
+
+			for k,v in pairs(entity) do
+				player[k] = v
+			end
+
+			world:update(player, player.x, player.y)
 			return
 		end
 
-		game:addPlayer(id, false)
-		player = game:getPlayer(id)
-		player.x = tonumber(x)
-		player.y = tonumber(y)
-		world:update(player, tonumber(x), tonumber(y))
-	elseif type == "enemy" and not server.hosting then
-		local enemy = enemy:new(id, x, y)
-		enemy.health = health
-		game.enemies[id] = enemy
+		player = game:getEntity(entity.id)
+		if not player then
+			game:addPlayer(#game.entities + 1, false, entity.name)
+			player = game:getEntity(#game.entities)
+		end
+
+		for k,v in pairs(entity) do
+			player[k] = v
+		end
+
+		world:update(player, player.x, player.y)
+	elseif enemy.type == "enemy" and not server.hosting then
+		print(enemy.id)
+		local enemy = enemy:new(entity.id, entity.x, entity.y)
+		for k,v in pairs(entity) do
+			enemy[k] = v
+		end
+		game.entities[enemy.id] = enemy
 	end
 end
 

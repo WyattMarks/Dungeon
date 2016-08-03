@@ -5,9 +5,7 @@ bullet = require("src/entities/bullet")
 enemy = require("src/entities/enemy")
 local game = {}
 game.map = {}
-game.players = {}
-game.bullets = {}
-game.enemies = {}
+game.entities = {}
 game.name = "player"
 game.toLoad = {}
 game.bulletsFired = 0
@@ -29,20 +27,12 @@ function game:load()
 		self.map:spawnEnemies()
 	end
 
-	self:addPlayer(self.name..tostring(math.random(0,10)), true)
+	self:addPlayer(#self.entities+1, true, self.name..tostring(math.random(0,10)))
 	camera:lookAt(self:getLocalPlayer().x, self:getLocalPlayer().y)
 end
 
-function game:getPlayer(name)
-	for k,v in pairs(self.players) do
-		if v.name == name then
-			return v
-		end
-	end
-end
-
-function game:getBullet(id)
-	for k,v in pairs(self.bullets) do
+function game:getEntity(id)
+	for k,v in pairs(self.entities) do
 		if v.id == id then
 			return v
 		end
@@ -50,7 +40,7 @@ function game:getBullet(id)
 end
 
 function game:network(peer, info)
-	local player = server:getPlayer(peer)
+	local player = server:getEntity(peer)
 	if player then
 		for k,v in pairs(info) do
 			player[k] = v
@@ -74,20 +64,21 @@ function game:checkToLoad(player)
 	end
 end
 
-function game:addPlayer(name, isLocal)
+function game:addPlayer(id, isLocal, name)
 	local player = Player:new()
 	player.name = name
+	player.id = id
 	player.isLocal = isLocal
 
 	self:checkToLoad(player)
 
 	player:load()
 
-	self.players[#self.players + 1] = player
+	self.entities[#self.entities + 1] = player
 end
 
 function game:getLocalPlayer()
-	for k,v in pairs(self.players) do
+	for k,v in pairs(self.entities) do
 		if v.isLocal then return v end
 	end
 	return false
@@ -99,13 +90,7 @@ function game:draw()
 
 	--self.map.lightWorld:draw(function()
 		self.map:draw()
-		for k,v in pairs(self.players) do
-			v:draw()
-		end
-		for k,v in pairs(self.enemies) do
-			v:draw()
-		end
-		for k,v in pairs(self.bullets) do
+		for k,v in ipairs(self.entities) do
 			v:draw()
 		end
 	--end)
@@ -121,24 +106,13 @@ function game:update(dt)
 	self.totalTime = (self.totalTime or 0) + dt
 	camera:lookAt(self:getLocalPlayer().x, self:getLocalPlayer().y)
 	self.map:update(dt)
-	for k,v in pairs(self.players) do
+	for k,v in ipairs(self.entities) do
 		for k,sys in pairs(self.systems) do
 			self.systems[k](v, dt)
 		end
 		v:update(dt)
 	end
-	for k,v in pairs(self.enemies) do
-		v:update(dt)
-		for i=1, #self.systems do
-			self.systems[i](v)
-		end
-	end
-	for k,v in pairs(self.bullets) do
-		v:update(dt)
-		for i=1, #self.systems do
-			self.systems[i](v)
-		end
-	end
+
 	self.debug:add("FPS", love.timer.getFPS())
 	self.debug:update(dt)
 end

@@ -9,8 +9,8 @@ function server:load()
 	self.hosting = true
 end
 
-function server:getPlayer(peer)
-	for k,v in pairs(game.players) do
+function server:getEntity(peer)
+	for k,v in pairs(game.entities) do
 		if v.peer and v.peer == peer then
 			return v
 		end
@@ -20,7 +20,7 @@ end
 
 function server:broadcast(message)
 	local sent = {}
-	for k,v in pairs(game.players) do
+	for k,v in pairs(game.entities) do
 		if v.peer then
 			v.peer:send(message)
 			sent[v.peer] = true
@@ -36,7 +36,7 @@ function server:broadcast(message)
 end
 
 function server:processPlayerInfo(data, peer)
-	local player = self:getPlayer(peer)
+	local player = self:getEntity(peer)
 	data = Tserial.unpack(data)
 	if player then
 		player.x = data[1]
@@ -49,18 +49,8 @@ end
 function server:broadcastEntityInfo()
 	local toSend = {}
 	
-	for k,v in pairs(game.players) do
-		local type = v.type
-		local x = v.x
-		local y = v.y
-		local health = v.health
-		local name = v.name
-		
-		toSend[name] = {type,x,y,health}
-	end
-
-	for k,v in pairs(game.enemies) do
-		toSend[v.id] = {v.type,v.x,v.y,v.health}
+	for k,v in pairs(game.entities) do
+		toSend[v.id] = {id = v.id, name = v.name, type = v.type, x = v.x, y = v.y, health = v.health}
 	end
 
 	local message = Tserial.pack(toSend,false,false)
@@ -81,28 +71,23 @@ function server:playerJoin(data, peer)
 
 	peer:send("MAP"..game.map:getNetworkedMap())
 
-	for k,v in pairs(game.players) do
-		local toSend = {v.type,v.name,v.x,v.y,v.health}
-		peer:send("JOIN"..Tserial.pack(toSend, false, false))
-	end
-
-	for k,v in pairs(game.enemies) do
-		local toSend = {v.type,v.id,v.x,v.y,v.health}
+	for k,v in pairs(game.entities) do
+		local toSend = {type = v.type, name = v.name, x = v.x, y= v.y, health = v.health, id = v.id}
 		peer:send("JOIN"..Tserial.pack(toSend, false, false))
 	end
 					
-	self:broadcast("JOIN"..Tserial.pack( {"player", name, x, y, 100}, false, false ))
+	self:broadcast("JOIN"..Tserial.pack( {type = "player",name = name,x = x,y = y}, false, false ))
 end
 
 function server:bullet(data, peer)
-	data = Tserial.unpack(data)
-	local player = self:getPlayer(peer)
+	local entity = Tserial.unpack(data)
 
-	if not player then return end
+	local bullet = bullet:spawn(#game.entities + 1, game:getLocalPlayer(), 0, 0, 0, 0) --Placeholder bullet
+	entity.id = bullet.id
 
-	data.id = player.name
+	table.insert(game.entities, bullet)
 
-	self:broadcast("SHOOT"..Tserial.pack(data, false, false))
+	self:broadcast("SHOOT"..Tserial.pack(entity, false, false))
 end
 
 function server:shoot(hit, bullet)
