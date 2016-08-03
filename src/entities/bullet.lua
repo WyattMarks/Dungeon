@@ -45,15 +45,18 @@ function bullet:update(dt)
 	for i=1, len do
 		local col = cols[i]
 		local hit = col.other
-		world:remove(self)
-		for k,v in pairs(game.bullets) do
-			if v == self then 
-				game.bullets[k] = nil
-			end
-		end
 
-		if server.hosting then
-			server:shoot(hit, self)
+		if i == 1 then
+			world:remove(self)
+			for k,v in pairs(game.bullets) do
+				if v == self then 
+					game.bullets[k] = nil
+				end
+			end
+
+			if server.hosting then
+				server:shoot(hit, self)
+			end
 		end
 	end
 end

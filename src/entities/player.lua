@@ -8,6 +8,8 @@ player.bulletSpeed = 200
 player.health = 100
 player.name = "player"
 player.type = "player"
+player.xvel = 0
+player.yvel = 0
 
 function player:draw()
 	love.graphics.setColor(50,50,205)
@@ -40,14 +42,22 @@ function player:update(dt)
 	local xMove, yMove = self.x, self.y
 	if self.right then
 		xMove = xMove + self.speed * dt
+		self.xvel = self.speed
 	elseif self.left then
 		xMove = xMove - self.speed * dt
+		self.xvel = -self.speed
+	else
+		self.xvel = 0
 	end
 
 	if self.up then
 		yMove = yMove - self.speed * dt
+		self.yvel = -self.speed
 	elseif self.down then
 		yMove = yMove + self.speed * dt
+		self.yvel = self.speed
+	else
+		self.yvel = 0
 	end
 
 	self.x, self.y, cols, len = world:move(self, xMove, yMove, self.filter)
@@ -66,6 +76,14 @@ function player:shoot(x, y)
 	local angle = math.atan2(x - pX, y - pY)
     local xvel = self.bulletSpeed * math.sin(angle)
     local yvel = self.bulletSpeed * math.cos(angle)
+
+	if math.abs(xvel + self.xvel) > math.abs(xvel) then
+		xvel = xvel + self.xvel
+	end
+
+	if math.abs(yvel + self.yvel) > math.abs(yvel) then
+		yvel = yvel + self.yvel
+	end
 
 	local toSend = {x = pX, y = pY, xvel = xvel, yvel = yvel}
 	client:send("SHOOT"..Tserial.pack(toSend, false, false))

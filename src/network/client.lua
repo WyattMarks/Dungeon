@@ -34,6 +34,7 @@ function client:updatePlayerInfo(data)
 				ply.x = info[1]
 				ply.y = info[2]
 				ply.health = info[3]
+				world:update(ply, ply.x, ply.y)
 			end
 		else
 			player.health = info[3]

@@ -120,6 +120,7 @@ function server:update(dt)
 					self:bullet(data:sub(6), event.peer)
 				end
 			elseif event.type == "connect" then
+				print(event.peer)
 				event.peer:send("READY")
 			elseif event.type == "disconnect" then
 				--TODO: remove from game and broadcast the problem
