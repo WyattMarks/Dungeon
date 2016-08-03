@@ -46,11 +46,23 @@ function server:processPlayerInfo(data, peer)
 	end
 end
 
-function server:broadcastPlayerInfo()
+function server:broadcastEntityInfo()
 	local toSend = {}
+	
 	for k,v in pairs(game.players) do
-		toSend[v.name] = {v.x,v.y,v.health}
+		local type = v.type
+		local x = v.x
+		local y = v.y
+		local health = v.health
+		local name = v.name
+		
+		toSend[name] = {type,x,y,health}
 	end
+
+	for k,v in pairs(game.enemies) do
+		toSend[v.id] = {v.type,v.x,v.y,v.health}
+	end
+
 	local message = Tserial.pack(toSend,false,false)
 	self:broadcast('UPDATE'..message)
 end
@@ -70,11 +82,16 @@ function server:playerJoin(data, peer)
 	peer:send("MAP"..game.map:getNetworkedMap())
 
 	for k,v in pairs(game.players) do
-		local toSend = {v.name,v.x,v.y}
+		local toSend = {v.type,v.name,v.x,v.y,v.health}
+		peer:send("JOIN"..Tserial.pack(toSend, false, false))
+	end
+
+	for k,v in pairs(game.enemies) do
+		local toSend = {v.type,v.id,v.x,v.y,v.health}
 		peer:send("JOIN"..Tserial.pack(toSend, false, false))
 	end
 					
-	self:broadcast("JOIN"..Tserial.pack( {name, x, y}, false, false ))
+	self:broadcast("JOIN"..Tserial.pack( {"player", name, x, y, 100}, false, false ))
 end
 
 function server:bullet(data, peer)
@@ -89,10 +106,14 @@ function server:bullet(data, peer)
 end
 
 function server:shoot(hit, bullet)
-	if hit.type == "player" then
+	if hit.type == "player" or hit.type == "enemy" then
 		hit.health = math.max(0, hit.health - 10)
 		if hit.health == 0 then
-			hit:die()
+			if hit.type == "enemy" then
+				self:broadcast("DIE"..Tserial.pack{hit.type, hit.id})
+			else
+				hit:die()
+			end
 		end
 	elseif hit.type == "bullet" then
 
@@ -104,7 +125,7 @@ function server:update(dt)
 	if self.lastUpdate >= self.updateRate then
 		self.lastUpdate = self.lastUpdate - self.updateRate
 		
-		self:broadcastPlayerInfo()
+		self:broadcastEntityInfo()
 	end
 	
 	local event = self.host:service()

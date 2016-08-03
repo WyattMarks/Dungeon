@@ -54,6 +54,8 @@ function bullet:update(dt)
 				end
 			end
 
+			print("bang", hit)
+
 			if server.hosting then
 				server:shoot(hit, self)
 			end

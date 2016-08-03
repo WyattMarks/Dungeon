@@ -2,10 +2,12 @@ Player = require("src/entities/player")
 Camera = require("src/thirdparty/camera")
 LightWorld = require("src/thirdparty/light")
 bullet = require("src/entities/bullet")
+enemy = require("src/entities/enemy")
 local game = {}
 game.map = {}
 game.players = {}
 game.bullets = {}
+game.enemies = {}
 game.name = "player"
 game.toLoad = {}
 game.bulletsFired = 0
@@ -21,6 +23,7 @@ function game:load()
 	self.map:load()
 	if server.hosting then
 		self.map:generate()
+		self.map:spawnEnemies()
 	end
 
 	self:addPlayer(self.name..tostring(math.random(0,10)), true)
@@ -96,6 +99,9 @@ function game:draw()
 		for k,v in pairs(self.players) do
 			v:draw()
 		end
+		for k,v in pairs(self.enemies) do
+			v:draw()
+		end
 		for k,v in pairs(self.bullets) do
 			v:draw()
 		end
@@ -116,6 +122,9 @@ function game:update(dt)
 	camera:lookAt(self:getLocalPlayer().x, self:getLocalPlayer().y)
 	self.map:update(dt)
 	for k,v in pairs(self.players) do
+		v:update(dt)
+	end
+	for k,v in pairs(self.enemies) do
 		v:update(dt)
 	end
 	for k,v in pairs(self.bullets) do
