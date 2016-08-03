@@ -17,7 +17,9 @@ function game:load()
 	self.bindings:load()
 	self.map = require("src/level/map")
 	self.debug = require("src/debug")
-
+	self.systems = require("src.systems.systems")
+	self.systems:load()
+	
 	camera = Camera(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
 	camera:zoom(2)
 
@@ -120,13 +122,22 @@ function game:update(dt)
 	camera:lookAt(self:getLocalPlayer().x, self:getLocalPlayer().y)
 	self.map:update(dt)
 	for k,v in pairs(self.players) do
+		for k,sys in pairs(self.systems) do
+			self.systems[k](v, dt)
+		end
 		v:update(dt)
 	end
 	for k,v in pairs(self.enemies) do
 		v:update(dt)
+		for i=1, #self.systems do
+			self.systems[i](v)
+		end
 	end
 	for k,v in pairs(self.bullets) do
 		v:update(dt)
+		for i=1, #self.systems do
+			self.systems[i](v)
+		end
 	end
 	self.debug:add("FPS", love.timer.getFPS())
 	self.debug:update(dt)

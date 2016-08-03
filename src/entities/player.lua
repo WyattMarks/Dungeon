@@ -39,26 +39,7 @@ function player:update(dt)
 		self.light:setGlowStrength(0.3)
 	end
 
-	local xMove, yMove = self.x, self.y
-	if self.right then
-		xMove = xMove + self.speed * dt
-		self.xvel = self.speed
-	elseif self.left then
-		xMove = xMove - self.speed * dt
-		self.xvel = -self.speed
-	else
-		self.xvel = 0
-	end
-
-	if self.up then
-		yMove = yMove - self.speed * dt
-		self.yvel = -self.speed
-	elseif self.down then
-		yMove = yMove + self.speed * dt
-		self.yvel = self.speed
-	else
-		self.yvel = 0
-	end
+	local xMove, yMove = self.x + self.xvel * dt, self.y + self.yvel * dt
 
 	self.x, self.y, cols, len = world:move(self, xMove, yMove, self.filter)
 	
