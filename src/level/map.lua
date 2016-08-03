@@ -16,8 +16,8 @@ end
 function map:spawnEnemies()
 	for k,room in pairs(self.rooms) do
 		for i=0,math.random(0,3) do
-			local x = math.random(room.x, room.x + room.width) * tile.tileSize
-			local y = math.random(room.y, room.y + room.height) * tile.tileSize
+			local x = math.random(room.x, room.x + room.width-1) * tile.tileSize
+			local y = math.random(room.y, room.y + room.height-1) * tile.tileSize
 
 			game.enemies[#game.enemies+1] = enemy:new(#game.enemies+1,x,y)
 		end
