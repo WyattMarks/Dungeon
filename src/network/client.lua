@@ -33,7 +33,10 @@ function client:updatePlayerInfo(data)
 			if ply then
 				ply.x = info[1]
 				ply.y = info[2]
+				ply.health = info[3]
 			end
+		else
+			player.health = info[3]
 		end
 	end
 end
@@ -81,12 +84,26 @@ function client:update(dt)
 				local player = game:getLocalPlayer()
 				player.x = data[1]
 				player.y = data[2]
+				world:update(player, data[1], data[2])
+			elseif data:sub(1,5) == "SHOOT" then
+				self:bullet(data:sub(6))
 			end
 		elseif event and event.type == 'disconnect' then 
 			error("Network error: "..tostring(event.data))
 		end
 		event = self.host:service()
 	until not event
+end
+
+function client:bullet(data)
+	data = Tserial.unpack(data)
+	local name = data.name
+	local x = data.x
+	local y = data.y
+	local xvel = data.xvel
+	local yvel = data.yvel
+
+	table.insert(game.bullets, bullet:spawn(game:getPlayer(name), x, y, xvel, yvel))
 end
 
 function client:playerJoin(data)

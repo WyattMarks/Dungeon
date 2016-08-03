@@ -49,7 +49,7 @@ end
 function server:broadcastPlayerInfo()
 	local toSend = {}
 	for k,v in pairs(game.players) do
-		toSend[v.name] = {v.x,v.y}
+		toSend[v.name] = {v.x,v.y,v.health}
 	end
 	local message = Tserial.pack(toSend,false,false)
 	self:broadcast('UPDATE'..message)
@@ -65,7 +65,6 @@ function server:playerJoin(data, peer)
 	local x = game.map.spawnRoom.x * tile.tileSize + game.map.spawnRoom.width * tile.tileSize / 2
 	local y = game.map.spawnRoom.y * tile.tileSize + game.map.spawnRoom.height * tile.tileSize / 2
 
-	
 	game:network(peer, {name = name, peer = peer})
 
 	peer:send("MAP"..game.map:getNetworkedMap())
@@ -76,6 +75,28 @@ function server:playerJoin(data, peer)
 	end
 					
 	self:broadcast("JOIN"..Tserial.pack( {name, x, y}, false, false ))
+end
+
+function server:bullet(data, peer)
+	data = Tserial.unpack(data)
+	local player = self:getPlayer(peer)
+
+	if not player then return end
+
+	data.name = player.name
+
+	self:broadcast("SHOOT"..Tserial.pack(data, false, false))
+end
+
+function server:shoot(hit, bullet)
+	if hit.type == "player" then
+		hit.health = math.max(0, hit.health - 10)
+		if hit.health == 0 then
+			hit:die()
+		end
+	elseif hit.type == "bullet" then
+
+	end
 end
 
 function server:update(dt)
@@ -95,6 +116,8 @@ function server:update(dt)
 					self:playerJoin(data, event.peer)
 				elseif data:sub(1,6) == "UPDATE" then
 					self:processPlayerInfo(data:sub(7), event.peer)
+				elseif data:sub(1,5) == "SHOOT" then
+					self:bullet(data:sub(6), event.peer)
 				end
 			elseif event.type == "connect" then
 				event.peer:send("READY")

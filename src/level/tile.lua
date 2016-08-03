@@ -1,5 +1,6 @@
 local tile = {}
 tile.tileSize = 40
+tile.type = "tile"
 
 function tile:load()
 	self.texture = love.graphics.newImage("assets/tiles.png")

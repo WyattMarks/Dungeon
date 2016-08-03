@@ -2,6 +2,7 @@ local settings = {}
 
 
 settings.binds = {
+	shoot = 1,
 	right = 'd',
 	left = 'a',
 	up = 'w',

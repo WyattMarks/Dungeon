@@ -1,11 +1,14 @@
-Player = require("src/player")
+Player = require("src/entities/player")
 Camera = require("src/thirdparty/camera")
 LightWorld = require("src/thirdparty/light")
+bullet = require("src/entities/bullet")
 local game = {}
 game.map = {}
 game.players = {}
+game.bullets = {}
 game.name = "player"
 game.toLoad = {}
+game.bulletsFired = 0
 
 function game:load()
 	self.bindings = require("src/input/bindings")
@@ -32,6 +35,14 @@ function game:getPlayer(name)
 	end
 end
 
+function game:getBullet(id)
+	for k,v in pairs(self.bullets) do
+		if v.id == id then
+			return v
+		end
+	end
+end
+
 function game:network(peer, info)
 	local player = server:getPlayer(peer)
 	if player then
@@ -46,19 +57,23 @@ function game:network(peer, info)
 	end
 end
 
-function game:addPlayer(name, isLocal)
-	local player = Player:new()
-	player.name = name
-	player.isLocal = isLocal
-
+function game:checkToLoad(player)
 	for k,v in pairs(self.toLoad) do
-		if v.name == name then
+		if v.name == player.name then
 			for key,value in pairs(v) do
 				player[key] = value
 			end
 			self.toLoad[k] = nil
 		end
 	end
+end
+
+function game:addPlayer(name, isLocal)
+	local player = Player:new()
+	player.name = name
+	player.isLocal = isLocal
+
+	self:checkToLoad(player)
 
 	player:load()
 
@@ -81,11 +96,15 @@ function game:draw()
 		for k,v in pairs(self.players) do
 			v:draw()
 		end
+		for k,v in pairs(self.bullets) do
+			v:draw()
+		end
 	--end)
 
 	camera:detach()
 
 	love.graphics.setColor(255,255,255)
+
 	love.graphics.print(tostring(love.timer.getFPS()), 10, 10)
 end
 
@@ -94,6 +113,9 @@ function game:update(dt)
 	camera:lookAt(self:getLocalPlayer().x, self:getLocalPlayer().y)
 	self.map:update(dt)
 	for k,v in pairs(self.players) do
+		v:update(dt)
+	end
+	for k,v in pairs(self.bullets) do
 		v:update(dt)
 	end
 end

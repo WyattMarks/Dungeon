@@ -1,5 +1,6 @@
 local bind = {
-    binds = {}
+    binds = {},
+    mouseBinds = {}
 }
 
 --[[Bind function setup:
@@ -16,6 +17,13 @@ function bind:removeBind(identifier)
 	self.binds[identifier] = nil;
 end
 
+function bind:addMouseBind(identifier, button, func)
+    self.mouseBinds[identifier] = {key, func}
+end
+
+function bind:removeMouseBind(identifier)
+	self.mouseBinds[identifier] = nil;
+end
 
 function bind:update(dt)
     
@@ -33,6 +41,22 @@ function bind:keypressed(key, isrepeat)
     for k,v in pairs(self.binds) do
         if v[1] == key then
             v[2](true, isrepeat);
+        end
+    end
+end
+
+function bind:mousepressed(x, y, button, touch)
+    for k,v in pairs(self.mouseBinds) do
+        if v[1] == key then
+            v[2](true, x, y, button, touch);
+        end
+    end
+end
+
+function bind:mousereleased(x, y, button, touch)
+    for k,v in pairs(self.mouseBinds) do
+        if v[1] == key then
+            v[2](false, x, y, button, touch);
         end
     end
 end

@@ -11,7 +11,7 @@ bind = require("src/input/bind")
 function love.load()
 	math.randomseed(os.time())
 	screenWidth, screenHeight = love.window.getMode()
-	server:load()
+	--server:load()
 	game:load()
 	client:load()
 end
@@ -35,4 +35,12 @@ end
 
 function love.keyreleased(key)
 	bind:keyreleased(key)
+end
+
+function love.mousepressed(x, y, button, istouch)
+	bind:mousepressed(x, y, button, istouch)
+end
+
+function love.mousereleased(x, y, button, istouch)
+	bind:mousereleased(x, y, button, istouch)
 end

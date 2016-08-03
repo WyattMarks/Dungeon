@@ -15,6 +15,11 @@ function bindings:load()
 	bind:addBind("playerDown", settings.binds.down, function(down)
 		game:getLocalPlayer().down = down
 	end)
+	bind:addMouseBind("playerShoot", settings.binds.shoot, function(down, x, y)
+		if down then
+			game:getLocalPlayer():shoot(x, y)
+		end
+	end)
 	
 end
 
