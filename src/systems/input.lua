@@ -1,6 +1,9 @@
 local input = function(entity, dt)
-    if not entity.isLocal then
-        return false
+    local components = {"xvel", "yvel", "speed", "right", "left", "up", "down"}
+    for i=1, #components do
+        if not entity[components[i]] then
+            return false
+        end
     end
 
 	if not ( entity.right and entity.left ) then
