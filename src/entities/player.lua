@@ -35,7 +35,7 @@ function player:update(dt)
 	end
 
 	if game.map.lightWorld and not self.light then 
-		self.light = game.map.lightWorld:newLight(self.x + self.width/2, self.y+self.height/2, 100, 140, 180, 600)
+		self.light = game.map.lightWorld:newLight(self.x + self.width/2, self.y+self.height/2, 100, 140, 180, 300)
 		self.light:setGlowStrength(0.3)
 	end
 
@@ -63,6 +63,10 @@ function player:update(dt)
 	self.x, self.y, cols, len = world:move(self, xMove, yMove, self.filter)
 	
 	if self.light then self.light:setPosition(self.x+self.width/2, self.y+self.height/2, 1) end
+
+	if game.debug and self.isLocal then 
+		game.debug:add("X/Y", tostring(math.floor( (self.x + self.width / 2) / tile.tileSize)).."/"..tostring(math.floor( (self.y + self.height / 2) / tile.tileSize)))
+	end
 end
 
 function player:new()

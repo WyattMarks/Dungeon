@@ -16,6 +16,7 @@ function game:load()
 	self.bindings = require("src/input/bindings")
 	self.bindings:load()
 	self.map = require("src/level/map")
+	self.debug = require("src/debug")
 
 	camera = Camera(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
 	camera:zoom(2)
@@ -111,10 +112,7 @@ function game:draw()
 
 	love.graphics.setColor(255,255,255)
 
-	love.graphics.print(tostring(love.timer.getFPS()), 10, 10)
-
-	local player = game:getLocalPlayer()
-	love.graphics.print(tostring(math.floor(player.x / tile.tileSize))..","..tostring(math.floor(player.y/tile.tileSize)), 10, 22)
+	self.debug:draw()
 end
 
 function game:update(dt)
@@ -130,6 +128,8 @@ function game:update(dt)
 	for k,v in pairs(self.bullets) do
 		v:update(dt)
 	end
+	self.debug:add("FPS", love.timer.getFPS())
+	self.debug:update(dt)
 end
 
 return game
