@@ -35,28 +35,6 @@ function server:broadcast(message)
 	end
 end
 
-function server:processPlayerInfo(data, peer)
-	local player = self:getEntity(peer)
-	data = Tserial.unpack(data)
-	if player then
-		player.x = data[1]
-		player.y = data[2]
-	else
-		game:network(peer, {x = data[1], y = data[2]})
-	end
-end
-
-function server:broadcastEntityInfo()
-	local toSend = {}
-	
-	for k,v in ipairs(game.entities) do
-		toSend[v.id] = {id = v.id, name = v.name, type = v.type, x = v.x, y = v.y, health = v.health}
-	end
-
-	local message = Tserial.pack(toSend,false,false)
-	self:broadcast('UPDATE'..message)
-end
-
 function server:send(player, data)
 	player.peer:send(data)
 end
@@ -75,35 +53,9 @@ function server:playerJoin(data, peer)
 		local toSend = {type = v.type, name = v.name, x = v.x, y= v.y, health = v.health, id = v.id}
 		peer:send("JOIN"..Tserial.pack(toSend, false, false))
 	end
-					
-	self:broadcast("JOIN"..Tserial.pack( {type = "player",name = name,x = x,y = y}, false, false ))
-end
 
-function server:bullet(data, peer)
-	local entity = Tserial.unpack(data)
+	self:broadcast("JOIN"..Tserial.pack( {type = "player",name = name,x = x,y = y, id = id}, false, false ))
 
-	local bullet = bullet:spawn(#game.entities + 1, game:getLocalPlayer(), 0, 0, 0, 0) --Placeholder bullet
-	entity.id = bullet.id
-
-	table.insert(game.entities, bullet)
-
-	self:broadcast("SHOOT"..Tserial.pack(entity, false, false))
-end
-
-function server:shoot(hit, bullet)
-	if hit.type == "player" or hit.type == "enemy" then
-
-		hit.health = math.max(0, hit.health - 10)
-		if hit.health == 0 then
-			if hit.type == "enemy" then
-				self:broadcast("DIE"..Tserial.pack{hit.type, hit.id})
-			else
-				hit:die()
-			end
-		end
-	elseif hit.type == "bullet" then
-
-	end
 end
 
 function server:update(dt)
@@ -111,7 +63,7 @@ function server:update(dt)
 	if self.lastUpdate >= self.updateRate then
 		self.lastUpdate = self.lastUpdate - self.updateRate
 		
-		self:broadcastEntityInfo()
+		--self:broadcastEntityInfo()
 	end
 	
 	local event = self.host:service()
@@ -121,13 +73,8 @@ function server:update(dt)
 				local data = event.data
 				if data:sub(1,4) == "JOIN" then
 					self:playerJoin(data, event.peer)
-				elseif data:sub(1,6) == "UPDATE" then
-					self:processPlayerInfo(data:sub(7), event.peer)
-				elseif data:sub(1,5) == "SHOOT" then
-					self:bullet(data:sub(6), event.peer)
 				end
 			elseif event.type == "connect" then
-				print(event.peer)
 				event.peer:send("READY")
 			elseif event.type == "disconnect" then
 				--TODO: remove from game and broadcast the problem
