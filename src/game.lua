@@ -39,6 +39,9 @@ function game:addEntity(entity, id)
 
 	self.entitiesByID[id] = entity
 	self.entities[#self.entities + 1] = entity
+	if server.hosting then
+		server:broadcast("SPAWN", entity)
+	end
 end
 
 function game:removeEntity(entity, index)
@@ -55,6 +58,9 @@ function game:removeEntity(entity, index)
 	self.entitiesByID[entity.id] = nil
 	if world and world:hasItem(entity) then
 	    world:remove(entity)
+	end
+	if server.hosting then
+		server:broadcast("KILL", { id = entity.id })
 	end
 end
 

@@ -18,7 +18,8 @@ function server:getEntity(peer)
 	return false
 end
 
-function server:broadcast(message)
+function server:broadcast(signal, payload)
+    local message = signal .. Tserial.serialize(payload, false, false)
 	local sent = {}
 	for k,v in ipairs(game.entities) do
 		if v.peer then
@@ -54,7 +55,7 @@ function server:playerJoin(data, peer)
 		peer:send("JOIN"..Tserial.pack(toSend, false, false))
 	end
 
-	self:broadcast("JOIN"..Tserial.pack( {type = "player",name = name,x = x,y = y, id = id}, false, false ))
+	self:broadcast("JOIN", {type = "player",name = name,x = x,y = y, id = id})
 
 end
 

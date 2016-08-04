@@ -56,7 +56,7 @@ function enemy:shoot(x, y)
 
 	table.insert(game.entities, bullet)
 
-	server:broadcast("SHOOT"..Tserial.pack(toSend, false, false))
+	server:broadcast("SHOOT", toSend)
 end
 
 function enemy:update(dt)
