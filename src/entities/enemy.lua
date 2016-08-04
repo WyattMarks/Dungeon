@@ -10,8 +10,10 @@ enemy.fireRate = 1
 enemy.type = "enemy"
 enemy.range = 300
 
+local enemyMeta = { __index = enemy }
+
 function enemy:new(id, x, y)
-	local new = util:copyTable(self)
+	local new = setmetatable({}, enemyMeta)
 	new.id = id
 	new.x = x
 	new.y = y

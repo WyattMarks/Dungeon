@@ -7,8 +7,10 @@ bullet.width = 5
 bullet.height = 5
 bullet.type = "bullet"
 
+local bulletMeta = { __index = bullet }
+
 function bullet:spawn(id,owner,x,y,xvel,yvel)
-	local new = util:copyTable(self)
+	local new = setmetatable({}, bulletMeta)
 	new.x = x
 	new.y = y
 	new.xvel = xvel
