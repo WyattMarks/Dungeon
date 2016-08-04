@@ -54,14 +54,16 @@ function server:playerJoin(data, peer)
 
 
 	for k,v in ipairs(game.entities) do
-		local toSend = {type = v.type, name = v.name, x = v.x, y= v.y, health = v.health, id = v.id}
+		local toSend = {type = v.type, name = v.name, x = v.x, y= v.y, health = v.health, id = v.id, xvel = v.xvel, yvel = v.yvel,}
+		if v.owner then toSend["owner"] = v.owner.id end
 		print("SENDING", v.type, v.id, v.name)
 		peer:send("SPAWN"..Tserial.pack(toSend, false, false))
 	end
 end
 
 function server:spawn(entity)
-	local toSend = {type = entity.type, name = entity.name, x = entity.x, y= entity.y, health = entity.health, id = entity.id}
+	local toSend = {type = entity.type, name = entity.name, x = entity.x, y= entity.y, health = entity.health, id = entity.id, xvel = entity.xvel, yvel = entity.yvel}
+	if entity.owner then toSend["owner"] = entity.owner.id end
 	self:broadcast("SPAWN", toSend)
 end
 

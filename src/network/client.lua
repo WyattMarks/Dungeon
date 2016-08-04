@@ -71,9 +71,11 @@ function client:spawn(ent)
 		entity.y = ent.y
 		game:addEntity(entity, ent.id, true)
 	elseif ent.type == "enemy" then
-
+		entity = enemy:new(ent.x,ent.y)
+		game:addEntity(entity, ent.id, true)
 	elseif ent.type == "bullet" then
-
+		entity = bullet:spawn(game.entitiesByID[ent.owner], ent.x, ent.y, ent.xvel, ent.yvel)
+		game:addEntity( entity, ent.id, true )
 	end
 end
 
