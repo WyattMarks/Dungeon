@@ -6,7 +6,7 @@ client.updateRate = .02
 client.lastUpdate = 0
 
 function client:send(signal, payload)
-	local message = signal .. Tserial.pack(payload, false, false) 
+	local message = signal .. util:pack(payload) 
 	if self.ready then
 		self.server:send(message)
 	else
@@ -51,9 +51,9 @@ function client:update(dt)
 			elseif data:sub(1,3) == "MAP" and not server.hosting then
 				game.map:loadFromNetworkedMap(data:sub(4))
 			elseif data:sub(1,5) == "SPAWN" then
-				self:spawn(Tserial.unpack(data:sub(6)))
+				self:spawn(util:unpack(data:sub(6)))
 			elseif data:sub(1,5) == "LOCAL" then
-				self.localID = Tserial.unpack(data:sub(6))[1]
+				self.localID = util:unpack(data:sub(6))[1]
 			end
 		elseif event and event.type == 'disconnect' then 
 			error("Network error: "..tostring(event.data))

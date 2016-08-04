@@ -15,7 +15,7 @@ function settings:load()
 	end
 	
 	local file, size = love.filesystem.read("dungeon.settings")
-	for k,v in pairs(Tserial.unpack(file)) do
+	for k,v in pairs(util:unpack(file)) do
 		if type(v) == "table" then
 			if not self[k] then
 				self[k] = v
@@ -33,7 +33,7 @@ function settings:load()
 end
 
 function settings:save()
-	love.filesystem.write("dungeon.settings", Tserial.pack(self, true, true))
+	love.filesystem.write("dungeon.settings", util:pack(self))
 end
 
 return settings

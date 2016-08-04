@@ -69,7 +69,7 @@ function player:shoot(x, y)
 	end
 
 	local toSend = {owner = self.id, x = pX, y = pY, xvel = xvel, yvel = yvel}
-	client:send("SHOOT"..Tserial.pack(toSend, false, false))
+	client:send("SHOOT", toSend)
 end
 
 function player:load()
@@ -81,7 +81,7 @@ function player:die()
 	self.x = game.map.spawnRoom.x * tile.tileSize + game.map.spawnRoom.width * tile.tileSize / 2
 	self.y = game.map.spawnRoom.y * tile.tileSize + game.map.spawnRoom.height * tile.tileSize / 2
 	world:update(self, self.x, self.y)
-	self.peer:send("MOVE"..Tserial.pack({self.x, self.y}, false, false))
+	self.peer:send("MOVE", {self.x, self.y})
 end
 
 return player

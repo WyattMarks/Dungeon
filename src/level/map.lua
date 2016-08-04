@@ -110,11 +110,11 @@ function map:getNetworkedMap()
 	toSend.height = self.height
 	toSend.width = self.width
 
-	return Tserial.pack(toSend, false, false)
+	return util:pack(toSend, false, false)
 end
 
 function map:loadFromNetworkedMap(toLoad)
-	toLoad = Tserial.unpack(toLoad)
+	toLoad = util:unpack(toLoad)
 
 	self.width = toLoad.width
 	self.height = toLoad.height
