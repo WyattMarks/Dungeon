@@ -31,6 +31,7 @@ function client:updateEntityInfo(data)
 	for k, entity in pairs(data) do
 
 		if entity.type == "player" then
+			print(entity.name, player.name, entity.id, player.id)
 			if entity.name ~= player.name then
 				local ply = game:getEntity(entity.id)
 				if ply then
@@ -43,7 +44,7 @@ function client:updateEntityInfo(data)
 				player.health = entity.health
 			end
 		elseif type == "enemy" then
-			local enemy = game.enemies[id]
+			local enemy = game.entities[id]
 			if enemy then
 				for k,v in pairs(entity) do
 					enemy[k] = v
@@ -144,13 +145,14 @@ function client:entityJoin(entity)
 --	print(entity.id, entity.type, entity.name)
 
 
-	if entity.type == "player" then				
+	if entity.type == "player" then			
 		local player = game:getLocalPlayer()
 		if entity.name == player.name then
-
 			for k,v in pairs(entity) do
 				player[k] = v
 			end
+
+			game.entities[player.id] = player
 
 			world:update(player, player.x, player.y)
 			return
@@ -167,12 +169,19 @@ function client:entityJoin(entity)
 		end
 
 		world:update(player, player.x, player.y)
-	elseif enemy.type == "enemy" and not server.hosting then
-		print(enemy.id)
+	elseif entity.type == "enemy" and not server.hosting then
+
 		local enemy = enemy:new(entity.id, entity.x, entity.y)
 		for k,v in pairs(entity) do
 			enemy[k] = v
 		end
+
+		if game.entities[enemy.id] then
+			local ent = game.entities[enemy.id]
+			ent.id = #game.entities + 1
+			game.entities[ent.id] = ent
+		end
+
 		game.entities[enemy.id] = enemy
 	end
 end

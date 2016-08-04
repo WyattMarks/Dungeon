@@ -10,7 +10,7 @@ function server:load()
 end
 
 function server:getEntity(peer)
-	for k,v in pairs(game.entities) do
+	for k,v in ipairs(game.entities) do
 		if v.peer and v.peer == peer then
 			return v
 		end
@@ -20,7 +20,7 @@ end
 
 function server:broadcast(message)
 	local sent = {}
-	for k,v in pairs(game.entities) do
+	for k,v in ipairs(game.entities) do
 		if v.peer then
 			v.peer:send(message)
 			sent[v.peer] = true
@@ -49,7 +49,7 @@ end
 function server:broadcastEntityInfo()
 	local toSend = {}
 	
-	for k,v in pairs(game.entities) do
+	for k,v in ipairs(game.entities) do
 		toSend[v.id] = {id = v.id, name = v.name, type = v.type, x = v.x, y = v.y, health = v.health}
 	end
 
@@ -71,7 +71,7 @@ function server:playerJoin(data, peer)
 
 	peer:send("MAP"..game.map:getNetworkedMap())
 
-	for k,v in pairs(game.entities) do
+	for k,v in ipairs(game.entities) do
 		local toSend = {type = v.type, name = v.name, x = v.x, y= v.y, health = v.health, id = v.id}
 		peer:send("JOIN"..Tserial.pack(toSend, false, false))
 	end
