@@ -50,9 +50,10 @@ function player:update(dt)
 	end
 end
 
+local playerMeta = { __index = player }
+
 function player:new()
-	local new = util:copyTable(self)
-	return new
+	return setmetatable({}, playerMeta)
 end
 
 function player:shoot(x, y)
@@ -87,3 +88,4 @@ function player:die()
 end
 
 return player
+
