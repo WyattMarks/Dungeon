@@ -8,7 +8,6 @@ game.map = {}
 game.entities = {}
 game.entitiesByID = {}
 game.name = "player"
-game.toLoad = {}
 
 function game:load()
 	self.name = self.name..tostring(math.random(1,10)) --Tempoary 

@@ -9,16 +9,13 @@ bullet.type = "bullet"
 
 local bulletMeta = { __index = bullet }
 
-function bullet:spawn(id,owner,x,y,xvel,yvel)
+function bullet:spawn(owner,x,y,xvel,yvel)
 	local new = setmetatable({}, bulletMeta)
 	new.x = x
 	new.y = y
 	new.xvel = xvel
 	new.yvel = yvel
 	new.owner = owner
-	new.id = id
-
-	world:add(new, new.x, new.y, new.width, new.height)
 
 	return new
 end 

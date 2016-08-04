@@ -29,6 +29,11 @@ function client:update(dt)
 			self.queue[k] = nil
 		end
 	end
+
+	if self.localID and game.entitiesByID[self.localID] then
+		game.entitiesByID[self.localID].isLocal = true
+		self.localID = nil
+	end
 	
 	self.lastUpdate = self.lastUpdate + dt
 	if self.lastUpdate > self.updateRate then
@@ -47,6 +52,8 @@ function client:update(dt)
 				game.map:loadFromNetworkedMap(data:sub(4))
 			elseif data:sub(1,5) == "SPAWN" then
 				self:spawn(Tserial.unpack(data:sub(6)))
+			elseif data:sub(1,5) == "LOCAL" then
+				self.localID = Tserial.unpack(data:sub(6))[1]
 			end
 		elseif event and event.type == 'disconnect' then 
 			error("Network error: "..tostring(event.data))

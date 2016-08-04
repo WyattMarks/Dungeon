@@ -47,14 +47,8 @@ function enemy:shoot(x, y)
 	local xvel = self.bulletSpeed * math.sin(angle)
 	local yvel = self.bulletSpeed * math.cos(angle)
 
-	local toSend = {owner = self.id, x = eX, y = eY, xvel = xvel, yvel = yvel}
+	game:addEntity( bullet:spawn(game:getLocalPlayer(), 0, 0, 0, 0) )
 
-	local bullet = bullet:spawn(#game.entities + 1, game:getLocalPlayer(), 0, 0, 0, 0) --Placeholder bullet
-	toSend.id = bullet.id
-
-	table.insert(game.entities, bullet)
-
-	server:broadcast("SHOOT", toSend)
 end
 
 function enemy:update(dt)

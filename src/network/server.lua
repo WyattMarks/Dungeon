@@ -27,13 +27,6 @@ function server:broadcast(signal, payload)
 			sent[v.peer] = true
 		end
 	end
-
-	for k,v in pairs(game.toLoad) do
-		if not sent[k] then
-			sent[k] = true
-			k:send(message)
-		end
-	end
 end
 
 function server:send(player, signal, payload)
@@ -53,16 +46,18 @@ function server:playerJoin(data, peer)
 	local ent = game.entitiesByID[game:addEntity(Player:new(info[2], name))]
 	ent.x = x
 	ent.y = y
+	ent.peer = peer
+
+	peer:send("LOCAL"..Tserial.pack({ent.id}, false, false))
+
 	world:update(ent, x, y)
 
 
 	for k,v in ipairs(game.entities) do
 		local toSend = {type = v.type, name = v.name, x = v.x, y= v.y, health = v.health, id = v.id}
+		print("SENDING", v.type, v.id, v.name)
 		peer:send("SPAWN"..Tserial.pack(toSend, false, false))
 	end
-
-	self:broadcast("SPAWN", {type = "player",name = name,x = x,y = y, id = ent.id})
-
 end
 
 function server:spawn(entity)
