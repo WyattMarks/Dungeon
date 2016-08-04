@@ -3,13 +3,13 @@ local util = {}
 local binser = require 'src.thirdparty.binser'
 
 function util:pack(data)
-    -- return Tserial.pack(data)
-    return binser.serialize(data)
+    return Tserial.pack(data)
+    -- return binser.serialize(data)
 end
 
 function util:unpack(data)
-    -- return Tserial.unpack(data)
-    return binser.deserialize(data)
+    return Tserial.unpack(data)
+    -- return binser.deserialize(data)
 end
 
 function util:copyTable(tbl)
