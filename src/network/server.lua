@@ -2,6 +2,8 @@ local server = {}
 server.port = 1337
 server.updateRate = .02
 server.lastUpdate = 0
+server.players = {}
+server.change = {0,0}
 
 function server:load()
 	self.host = enet.host_create("*:"..tostring(self.port))
@@ -9,8 +11,8 @@ function server:load()
 	self.hosting = true
 end
 
-function server:getEntity(peer)
-	for k,v in ipairs(game.entities) do
+function server:getPlayer(peer)
+	for k,v in ipairs(self.players) do
 		if v.peer and v.peer == peer then
 			return v
 		end
@@ -47,6 +49,7 @@ function server:playerJoin(data, peer)
 	ent.x = x
 	ent.y = y
 	ent.peer = peer
+	self.players[#self.players + 1] = ent
 
 	peer:send("LOCAL" .. util:pack({ent.id}))
 
@@ -78,17 +81,20 @@ function server:broadcastEntityInfo()
 end
 
 function server:processPlayerInfo(data, peer)
-	local player = self:getEntity(peer)
+	local player = self:getPlayer(peer)
 
-	if player.isLocal then return end
-	
-	for k,v in pairs(data) do
-		player[k] = v
-	end
+	self.change = {math.max(math.abs(player.x - data.x), self.change[1]), math.max(math.abs(player.y - data.y), self.change[2])}
+
+	game.debug:add("PlayerPosChange", tostring(self.change[1]).."/"..tostring(self.change[2]))
+
+	player.x = data.x
+	player.y = data.y
+	world:update(player, player.x, player.y)
 end
 
 function server:update(dt)
 	self.lastUpdate = self.lastUpdate + dt
+
 	if self.lastUpdate >= self.updateRate then
 		self.lastUpdate = self.lastUpdate - self.updateRate
 		

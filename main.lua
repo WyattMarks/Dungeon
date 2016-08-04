@@ -11,7 +11,7 @@ bind = require("src/input/bind")
 function love.load()
 	math.randomseed(os.time())
 	screenWidth, screenHeight = love.window.getMode()
-	server:load()
+--	server:load()
 	game:load()
 	client:load()
 end

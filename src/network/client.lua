@@ -2,7 +2,7 @@ local client = {}
 client.address = "localhost"
 client.port = 1337
 client.queue = {}
-client.updateRate = .02
+client.updateRate = 0
 client.lastUpdate = 0
 
 function client:send(signal, payload)
@@ -23,11 +23,11 @@ function client:load()
 end
 
 function client:sendPlayerInfo()
+	if server.hosting then return end
 	local ent = game:getLocalPlayer()
 	if not ent then return end
 
-
-	local toSend = {x = ent.x, y = ent.y, xvel = ent.xvel, yvel = ent.yvel}
+	local toSend = {x = ent.x, y = ent.y}
 
 	self:send("UPDATE", toSend)
 end
@@ -47,7 +47,7 @@ function client:update(dt)
 	
 	self.lastUpdate = self.lastUpdate + dt
 	if self.lastUpdate > self.updateRate then
-		self.lastUpdate = self.lastUpdate - dt
+		self.lastUpdate = self.lastUpdate - self.updateRate
 		
 		self:sendPlayerInfo()
 	end
@@ -83,6 +83,8 @@ function client:processEntityInfo(data)
 				for key, val in pairs(info) do
 					ent[key] = val
 				end
+
+				world:update(ent, ent.x, ent.y)
 			else
 				ent.health = info.health or ent.health
 			end

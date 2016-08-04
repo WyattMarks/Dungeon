@@ -5,17 +5,13 @@ local bitser = require 'src.thirdparty.bitser'
 -- local knifeser = require 'src.thirdparty.knifeser'
 
 function util:pack(data)
-    -- return Tserial.pack(data)
-    -- return (binser.serialize(data))
-    return (bitser.dumps(data))
-    -- return (knifeser(data))
+	--return Tserial.pack(data)
+	return (bitser.dumps(data))
 end
 
 function util:unpack(data)
-    -- return Tserial.unpack(data)
-    -- return (binser.deserialize(data))
-    return (bitser.loads(data))
-    -- return (setfenv(loadstring(data), {})())
+	--return Tserial.unpack(data)
+	return (bitser.loads(data))
 end
 
 function util:copyTable(tbl)
