@@ -42,8 +42,20 @@ function game:addEntity(entity, id)
 end
 
 function game:removeEntity(entity, index)
+    if not index then
+        for k,v in ipairs(self.entities) do
+            if v == entity then
+                index = k
+                break
+            end
+        end
+        error('entity not found')
+    end
 	table.remove(self.entities, index)
 	self.entitiesByID[entity.id] = nil
+	if world and world:hasItem(entity) then
+	    world:remove(entity)
+	end
 end
 
 function game:getLocalPlayer()
@@ -71,7 +83,7 @@ end
 function game:update(dt)
 	camera:lookAt(self:getLocalPlayer().x, self:getLocalPlayer().y)
 	self.map:update(dt)
-	for i=1, #self.entities do
+	for i=#self.entities, 1, -1 do
 		local ent = self.entities[i]
 		for k,sys in pairs(self.systems) do
 			self.systems[k](ent, i, dt)
