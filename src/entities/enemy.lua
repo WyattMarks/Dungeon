@@ -12,12 +12,10 @@ enemy.range = 300
 
 local enemyMeta = { __index = enemy }
 
-function enemy:new(id, x, y)
+function enemy:new(x, y)
 	local new = setmetatable({}, enemyMeta)
-	new.id = id
 	new.x = x
 	new.y = y
-	world:add(new, new.x, new.y, new.width, new.height)
 
 	return new
 end

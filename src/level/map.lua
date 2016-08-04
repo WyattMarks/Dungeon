@@ -19,7 +19,7 @@ function map:spawnEnemies()
 			local x = math.random(room.x, room.x + room.width-1) * tile.tileSize
 			local y = math.random(room.y, room.y + room.height-1) * tile.tileSize
 
-			game:addEntity(enemy:new(#game.entities+1,x,y))
+			game:addEntity(enemy:new(x,y))
 		end
 	end
 end

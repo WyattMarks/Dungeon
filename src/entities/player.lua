@@ -30,9 +30,6 @@ function player:filter(other)
 end
 
 function player:update(dt)
-	if not self.peer then
-		game:checkToLoad(self)
-	end
 
 	if game.map.lightWorld and not self.light then 
 		self.light = game.map.lightWorld:newLight(self.x + self.width/2, self.y+self.height/2, 100, 140, 180, 300)
@@ -52,8 +49,8 @@ end
 
 local playerMeta = { __index = player }
 
-function player:new()
-	return setmetatable({}, playerMeta)
+function player:new(isLocal, name)
+	return setmetatable({isLocal = isLocal, name = name}, playerMeta)
 end
 
 function player:shoot(x, y)

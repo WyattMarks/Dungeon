@@ -19,7 +19,7 @@ function server:getEntity(peer)
 end
 
 function server:broadcast(signal, payload)
-	local message = signal .. Tserial.serialize(payload, false, false)
+	local message = signal .. Tserial.pack(payload, false, false)
 	local sent = {}
 	for k,v in ipairs(game.entities) do
 		if v.peer then
@@ -36,7 +36,8 @@ function server:broadcast(signal, payload)
 	end
 end
 
-function server:send(player, data)
+function server:send(player, signal, payload)
+	local data = signal .. Tserial.serialize(payload, false, false)
 	player.peer:send(data)
 end
 
@@ -46,17 +47,27 @@ function server:playerJoin(data, peer)
 	local x = game.map.spawnRoom.x * tile.tileSize + game.map.spawnRoom.width * tile.tileSize / 2
 	local y = game.map.spawnRoom.y * tile.tileSize + game.map.spawnRoom.height * tile.tileSize / 2
 
-	game:network(peer, {name = name, peer = peer})
 
 	peer:send("MAP"..game.map:getNetworkedMap())
 
+	local ent = game.entitiesByID[game:addEntity(Player:new(info[2], name))]
+	ent.x = x
+	ent.y = y
+	world:update(ent, x, y)
+
+
 	for k,v in ipairs(game.entities) do
 		local toSend = {type = v.type, name = v.name, x = v.x, y= v.y, health = v.health, id = v.id}
-		peer:send("JOIN"..Tserial.pack(toSend, false, false))
+		peer:send("SPAWN"..Tserial.pack(toSend, false, false))
 	end
 
-	self:broadcast("JOIN", {type = "player",name = name,x = x,y = y, id = id})
+	self:broadcast("SPAWN", {type = "player",name = name,x = x,y = y, id = ent.id})
 
+end
+
+function server:spawn(entity)
+	local toSend = {type = entity.type, name = entity.name, x = entity.x, y= entity.y, health = entity.health, id = entity.id}
+	self:broadcast("SPAWN", toSend)
 end
 
 function server:update(dt)
