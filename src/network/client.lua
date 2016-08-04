@@ -22,6 +22,16 @@ function client:load()
 	self:send("JOIN", {game.name, server.hosting})
 end
 
+function client:sendPlayerInfo()
+	local ent = game:getLocalPlayer()
+	if not ent then return end
+
+
+	local toSend = {x = ent.x, y = ent.y, xvel = ent.xvel, yvel = ent.yvel}
+
+	self:send("UPDATE", toSend)
+end
+
 function client:update(dt)
 	if self.ready then
 		for k,v in pairs(self.queue) do
@@ -39,7 +49,7 @@ function client:update(dt)
 	if self.lastUpdate > self.updateRate then
 		self.lastUpdate = self.lastUpdate - dt
 		
-		--self:sendPlayerInfo()
+		self:sendPlayerInfo()
 	end
 	
 	local event = self.host:service()
@@ -54,6 +64,8 @@ function client:update(dt)
 				self:spawn(util:unpack(data:sub(6)))
 			elseif data:sub(1,5) == "LOCAL" then
 				self.localID = util:unpack(data:sub(6))[1]
+			elseif data:sub(1,6) == "UPDATE" then
+				self:processEntityInfo(util:unpack(data:sub(7)))
 			end
 		elseif event and event.type == 'disconnect' then 
 			error("Network error: "..tostring(event.data))
@@ -62,9 +74,26 @@ function client:update(dt)
 	until not event
 end
 
+function client:processEntityInfo(data)
+	for id, info in pairs(data) do
+		if game.entitiesByID[id] then
+			local ent = game.entitiesByID[id]
+			
+			if not ent.isLocal then
+				for key, val in pairs(info) do
+					ent[key] = val
+				end
+			else
+				ent.health = info.health or ent.health
+			end
+		else
+			debug:print("Error, no entity "..tostring(id))
+		end
+	end
+end
+
 function client:spawn(ent)
 	local entity = {}
-	print("SPAWNING", ent.type, ent.id, ent.name)
 	if ent.type == "player" then
 		entity = Player:new(false, ent.name)
 		entity.x = ent.x

@@ -56,7 +56,6 @@ function server:playerJoin(data, peer)
 	for k,v in ipairs(game.entities) do
 		local toSend = {type = v.type, name = v.name, x = v.x, y= v.y, health = v.health, id = v.id, xvel = v.xvel, yvel = v.yvel,}
 		if v.owner then toSend["owner"] = v.owner.id end
-		print("SENDING", v.type, v.id, v.name)
 		peer:send("SPAWN" .. util:pack(toSend))
 	end
 end
@@ -67,12 +66,33 @@ function server:spawn(entity)
 	self:broadcast("SPAWN", toSend)
 end
 
+function server:broadcastEntityInfo()
+	local toSend = {}
+
+	for i=1, #game.entities do
+		local ent = game.entities[i]
+		toSend[ent.id] = {x = ent.x, y = ent.y, xvel = ent.xvel, yvel = ent.yvel, health = ent.health}
+	end
+
+	self:broadcast("UPDATE", toSend)
+end
+
+function server:processPlayerInfo(data, peer)
+	local player = self:getEntity(peer)
+
+	if player.isLocal then return end
+	
+	for k,v in pairs(data) do
+		player[k] = v
+	end
+end
+
 function server:update(dt)
 	self.lastUpdate = self.lastUpdate + dt
 	if self.lastUpdate >= self.updateRate then
 		self.lastUpdate = self.lastUpdate - self.updateRate
 		
-		--self:broadcastEntityInfo()
+		self:broadcastEntityInfo()
 	end
 	
 	local event = self.host:service()
@@ -82,6 +102,8 @@ function server:update(dt)
 				local data = event.data
 				if data:sub(1,4) == "JOIN" then
 					self:playerJoin(data, event.peer)
+				elseif data:sub(1,6) == "UPDATE" then
+					self:processPlayerInfo(util:unpack(data:sub(7)), event.peer)
 				end
 			elseif event.type == "connect" then
 				event.peer:send("READY")
