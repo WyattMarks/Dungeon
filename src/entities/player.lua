@@ -60,8 +60,8 @@ function player:shoot(x, y)
 	x, y = camera:worldCoords(x,y)
 	local pX, pY = self.x + self.width / 2 - bullet.width / 2, self.y + self.height / 2 - bullet.height / 2
 	local angle = math.atan2(x - pX, y - pY)
-    local xvel = self.bulletSpeed * math.sin(angle)
-    local yvel = self.bulletSpeed * math.cos(angle)
+	local xvel = self.bulletSpeed * math.sin(angle)
+	local yvel = self.bulletSpeed * math.cos(angle)
 
 	if math.abs(xvel + self.xvel) > math.abs(xvel) then
 		xvel = xvel + self.xvel

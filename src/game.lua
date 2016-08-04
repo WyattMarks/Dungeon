@@ -45,19 +45,19 @@ function game:addEntity(entity, id)
 end
 
 function game:removeEntity(entity, index)
-    if not index then
-        for k,v in ipairs(self.entities) do
-            if v == entity then
-                index = k
-                break
-            end
-        end
-        error('entity not found')
-    end
+	if not index then
+		for k,v in ipairs(self.entities) do
+			if v == entity then
+				index = k
+				break
+			end
+		end
+		error('entity not found')
+	end
 	table.remove(self.entities, index)
 	self.entitiesByID[entity.id] = nil
 	if world and world:hasItem(entity) then
-	    world:remove(entity)
+		world:remove(entity)
 	end
 	if server.hosting then
 		server:broadcast("KILL", { id = entity.id })

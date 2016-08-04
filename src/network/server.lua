@@ -19,7 +19,7 @@ function server:getEntity(peer)
 end
 
 function server:broadcast(signal, payload)
-    local message = signal .. Tserial.serialize(payload, false, false)
+	local message = signal .. Tserial.serialize(payload, false, false)
 	local sent = {}
 	for k,v in ipairs(game.entities) do
 		if v.peer then

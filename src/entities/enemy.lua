@@ -46,8 +46,8 @@ end
 function enemy:shoot(x, y)
 	local eX, eY = self.x + self.width / 2 - bullet.width / 2, self.y + self.height / 2 - bullet.height / 2
 	local angle = math.atan2(x - eX, y - eY)
-    local xvel = self.bulletSpeed * math.sin(angle)
-    local yvel = self.bulletSpeed * math.cos(angle)
+	local xvel = self.bulletSpeed * math.sin(angle)
+	local yvel = self.bulletSpeed * math.cos(angle)
 
 	local toSend = {owner = self.id, x = eX, y = eY, xvel = xvel, yvel = yvel}
 
