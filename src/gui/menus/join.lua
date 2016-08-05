@@ -1,6 +1,8 @@
 local join = {}
 
 function join:load()
+	self.errors = {}
+
 	self.joinButton = button:new("Join game", screenWidth / 2 - screenWidth / 8, screenHeight / 2, 100, 30, function()
         game.name = self.nameBox.text
 
@@ -12,6 +14,13 @@ function join:load()
 			local index = ip:find(":")
 			port = tonumber(ip:sub(index + 1))
 			ip = ip:sub(1, index - 1)
+		end
+
+		local socket = require("socket")
+
+		if socket.dns.toip(ip) == "0.0.0.0:0" then
+			self.errors[#self.errors + 1] = "Failed to resolve hostname."
+			return
 		end
         
 		client.address = ip
@@ -48,6 +57,16 @@ function join:draw()
 	love.graphics.print(str, screenWidth / 2 - font.large:getWidth(str) / 2, screenHeight / 4)
 
     love.graphics.setFont(font.small)
+
+	str = "Error: " .. ( self.errors[#self.errors] or '' )
+
+	if #self.errors > 0 then
+		love.graphics.setColor(205,50,50)
+
+		love.graphics.print(str, screenWidth / 2 - font.small:getWidth(str) / 2, screenHeight / 3 * 2)
+
+		love.graphics.setColor(255,255,255)
+	end
 
     str = "IP: "
     love.graphics.print(str, self.ipBox.x - font.small:getWidth(str), self.ipBox.y)
