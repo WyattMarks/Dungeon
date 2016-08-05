@@ -17,8 +17,10 @@ function join:load()
 		end
 
 		local socket = require("socket")
+		local a,b = socket.dns.toip(ip)
 
-		if socket.dns.toip(ip) == "0.0.0.0:0" then
+
+		if b == "host not found" then
 			self.errors[#self.errors + 1] = "Failed to resolve hostname."
 			return
 		end
