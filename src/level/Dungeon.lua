@@ -1,5 +1,4 @@
 tile = require("src/level/tile")
-util = require("src/util")
 room = require("src/level/room")
 hall = require("src/level/hall")
 delauney = require("src/thirdparty/delauney")

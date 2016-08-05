@@ -7,21 +7,22 @@ bullet.width = 5
 bullet.height = 5
 bullet.type = "bullet"
 
-local bulletMeta = { __index = bullet }
+local bulletMeta = {__index = bullet}
 
-function bullet:spawn(owner,x,y,xvel,yvel)
+
+function bullet:new(owner,x,y,xvel,yvel)
 	local new = setmetatable({}, bulletMeta)
-	new.x = x
-	new.y = y
-	new.xvel = xvel
-	new.yvel = yvel
-	new.owner = owner
+	new.x = x or self.x
+	new.y = y or self.y
+	new.xvel = xvel or self.xvel
+	new.yvel = yvel or self.yvel
+	new.owner = owner or -1
 
 	return new
 end 
 
 function bullet:filter(other)
-	if self.owner == other or self.type == other.type then
+	if self.owner == other.id or self.type == other.type then
 		return false
 	else
 		return "slide"
@@ -45,16 +46,11 @@ function bullet:update(dt)
 		local hit = col.other
 
 		if i == 1 then
-			world:remove(self)
-			for k,v in pairs(game.entities) do
-				if v == self then 
-					game.entities[k] = nil
-				end
+			if server.hosting and hit.health then
+				hit.health = math.max(0, hit.health - 10)
 			end
 
-			if server.hosting then
-				server:shoot(hit, self)
-			end
+			game:removeEntity(self)
 		end
 	end
 end

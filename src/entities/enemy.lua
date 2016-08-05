@@ -21,7 +21,7 @@ function enemy:new(x, y)
 end
 
 function enemy:filter(other)
-	if other.owner == self then
+	if other.owner == self.id then
 		return false
 	else
 		return "slide"
@@ -44,11 +44,11 @@ end
 function enemy:shoot(x, y)
 	local eX, eY = self.x + self.width / 2 - bullet.width / 2, self.y + self.height / 2 - bullet.height / 2
 	local angle = math.atan2(x - eX, y - eY)
-	local xvel = self.bulletSpeed * math.sin(angle)
-	local yvel = self.bulletSpeed * math.cos(angle)
+    local xvel = self.bulletSpeed * math.sin(angle)
+    local yvel = self.bulletSpeed * math.cos(angle)
 
-	game:addEntity( bullet:spawn(game:getLocalPlayer(), 0, 0, 0, 0) )
 
+	game:addEntity(bullet:new(self.id, eX, eY, xvel, yvel))
 end
 
 function enemy:update(dt)
@@ -71,10 +71,8 @@ function enemy:update(dt)
 			self.lastShoot = self.lastShoot - math.random(self.fireRate-self.fireRate/2, self.fireRate+self.fireRate/2)
 
 			local players = {}
-			for k,v in pairs(game.entities) do
-				if v.type == "player" then
-					players[#players+1] = {util:distance(self.x, self.y, v.x, v.y), v}
-				end 
+			for k,v in pairs(server.players) do
+				players[#players+1] = {util:distance(self.x, self.y, v.x, v.y), v}
 			end
 
 			table.sort(players, function( b, a ) return a[1] > b[1] end)

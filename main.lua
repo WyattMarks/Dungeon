@@ -1,5 +1,6 @@
 io.stdout:setvbuf("no")
 game = require("src/game")
+menu = require("src/gui/menu")
 bump = require("src/thirdparty/bump")
 require("src/thirdparty/Tserial")
 settings = require("src/settings")
@@ -7,25 +8,33 @@ server = require("src/network/server")
 client = require("src/network/client")
 require("enet")
 bind = require("src/input/bind")
+util =  require("src/util")
 
 function love.load()
 	math.randomseed(os.time())
 	screenWidth, screenHeight = love.window.getMode()
---	server:load()
-	game:load()
-	client:load()
+
+	menu:load()
 end
 
 function love.update(dt)
-	game:update(dt)
-	if server.hosting then
-		server:update(dt)
+	if game.running then
+		game:update(dt)
+		if server.hosting then
+			server:update(dt)
+		end
+		client:update(dt)
+	else
+		menu:update(dt)
 	end
-	client:update(dt)
 end
 
 function love.draw()
-	game:draw()
+	if game.running then
+		game:draw()
+	else
+		menu:draw()
+	end
 end
 
 

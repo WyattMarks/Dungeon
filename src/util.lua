@@ -1,11 +1,9 @@
 local util = {}
 
--- local binser = require 'src.thirdparty.binser'
-local bitser = require 'src.thirdparty.bitser'
--- local knifeser = require 'src.thirdparty.knifeser'
+local bitser = require("src.thirdparty.bitser")
 
 function util:pack(data)
-	--return Tserial.pack(data)
+	--return Tserial.pack(data, false, false)
 	return (bitser.dumps(data))
 end
 
@@ -41,6 +39,10 @@ end
 
 function util:rectangleCollision(rect1, rect2)
 	return not (rect2.x > rect1.x + rect1.width * tile.tileSize or rect2.x + rect2.width * tile.tileSize < rect1.x or rect2.y > rect1.y + rect1.height * tile.tileSize or rect2.y + rect2.height * tile.tileSize < rect1.y)	
+end
+
+function util:rectPointCollision(rect, x, y)
+	return x >= rect.x and x <= rect.x + rect.width and y >= rect.y and y <= rect.y + rect.height
 end
 
 function util:distance(x,y,x2,y2)

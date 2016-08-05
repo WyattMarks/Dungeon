@@ -2,11 +2,11 @@ local client = {}
 client.address = "localhost"
 client.port = 1337
 client.queue = {}
-client.updateRate = 0
+client.updateRate = .02
 client.lastUpdate = 0
 
-function client:send(signal, payload)
-	local message = signal .. util:pack(payload) 
+function client:send(signal, payload) 
+	local message = signal..util:pack(payload)
 	if self.ready then
 		self.server:send(message)
 	else
@@ -19,18 +19,35 @@ function client:load()
 	self.server = self.host:connect(self.address..":"..tostring(self.port))
 	--self.udp:settimeout(0)
 
-	self:send("JOIN", {game.name, server.hosting})
+	self:send("JOIN", {game.name})
+end
+
+function client:updateEntityInfo(data)
+	if server.hosting then return end
+
+	for id, info in pairs(data) do
+		local ent = game.entitiesByID[id]
+		if ent then
+			if ent ~= game:getLocalPlayer() then
+				for k,v in pairs(info) do
+					ent[k] = v
+				end
+			else
+				game:getLocalPlayer().health = info.health
+			end
+
+			world:update(ent, ent.x, ent.y)
+		end
+	end
 end
 
 function client:sendPlayerInfo()
-	if server.hosting then return end
-	local ent = game:getLocalPlayer()
-	if not ent then return end
+	local player = game:getLocalPlayer()
+	if server.hosting or not player then return end
 
-	local toSend = {x = ent.x, y = ent.y}
-
-	self:send("UPDATE", toSend)
+	self:send('UPDATE', {player.x, player.y})
 end
+
 
 function client:update(dt)
 	if self.ready then
@@ -59,13 +76,16 @@ function client:update(dt)
 			if data == "READY" then
 				self.ready = true
 			elseif data:sub(1,3) == "MAP" and not server.hosting then
-				game.map:loadFromNetworkedMap(data:sub(4))
+				game.map:loadFromNetworkedMap(util:unpack(data:sub(4)))
 			elseif data:sub(1,5) == "SPAWN" then
 				self:spawn(util:unpack(data:sub(6)))
 			elseif data:sub(1,5) == "LOCAL" then
 				self.localID = util:unpack(data:sub(6))[1]
+				print(self.localID)
 			elseif data:sub(1,6) == "UPDATE" then
-				self:processEntityInfo(util:unpack(data:sub(7)))
+				self:updateEntityInfo(util:unpack(data:sub(7)))
+			elseif data:sub(1,4) == "KILL" then
+				self:kill(util:unpack(data:sub(5)))
 			end
 		elseif event and event.type == 'disconnect' then 
 			error("Network error: "..tostring(event.data))
@@ -74,41 +94,35 @@ function client:update(dt)
 	until not event
 end
 
-function client:processEntityInfo(data)
-	for id, info in pairs(data) do
-		if game.entitiesByID[id] then
-			local ent = game.entitiesByID[id]
-			
-			if not ent.isLocal then
-				for key, val in pairs(info) do
-					ent[key] = val
-				end
-
-				world:update(ent, ent.x, ent.y)
-			else
-				ent.health = info.health or ent.health
-			end
-		else
-			debug:print("Error, no entity "..tostring(id))
-		end
-	end
+function client:kill(data)
+	game:removeEntity(game.entitiesByID[data.id], nil, true)	
 end
 
-function client:spawn(ent)
+function client:spawn(info)
 	local entity = {}
-	if ent.type == "player" then
-		entity = Player:new(false, ent.name)
-		entity.x = ent.x
-		entity.y = ent.y
-		game:addEntity(entity, ent.id, true)
-	elseif ent.type == "enemy" then
-		entity = enemy:new(ent.x,ent.y)
-		game:addEntity(entity, ent.id, true)
-	elseif ent.type == "bullet" then
-		entity = bullet:spawn(game.entitiesByID[ent.owner], ent.x, ent.y, ent.xvel, ent.yvel)
-		game:addEntity( entity, ent.id, true )
+	if info.type == "player" then
+		entity = Player:new()
+	elseif info.type == "enemy" then
+		entity = enemy:new()
+	elseif info.type == "bullet" then
+		entity = bullet:new()
 	end
+
+	for k,v in pairs(info) do
+		entity[k] = v
+	end
+
+	game:addEntity(entity, info.id, true)			
 end
+
+
+
+
+
+
+
+
+
 
 
 

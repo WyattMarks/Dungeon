@@ -19,7 +19,7 @@ function map:spawnEnemies()
 			local x = math.random(room.x, room.x + room.width-1) * tile.tileSize
 			local y = math.random(room.y, room.y + room.height-1) * tile.tileSize
 
-			game:addEntity(enemy:new(x,y))
+			game:addEntity( enemy:new(x, y) )
 		end
 	end
 end
@@ -110,11 +110,10 @@ function map:getNetworkedMap()
 	toSend.height = self.height
 	toSend.width = self.width
 
-	return util:pack(toSend, false, false)
+	return toSend
 end
 
 function map:loadFromNetworkedMap(toLoad)
-	toLoad = util:unpack(toLoad)
 
 	self.width = toLoad.width
 	self.height = toLoad.height

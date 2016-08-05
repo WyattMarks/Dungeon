@@ -3,7 +3,6 @@ server.port = 1337
 server.updateRate = .02
 server.lastUpdate = 0
 server.players = {}
-server.change = {0,0}
 
 function server:load()
 	self.host = enet.host_create("*:"..tostring(self.port))
@@ -12,7 +11,7 @@ function server:load()
 end
 
 function server:getPlayer(peer)
-	for k,v in ipairs(self.players) do
+	for k,v in pairs(self.players) do
 		if v.peer and v.peer == peer then
 			return v
 		end
@@ -20,10 +19,15 @@ function server:getPlayer(peer)
 	return false
 end
 
+function server:send(player, signal, payload)
+	local data = signal..util:pack(payload)
+	player.peer:send(data)
+end
+
 function server:broadcast(signal, payload)
-	local message = signal .. util:pack(payload)
+	local message = signal..util:pack(payload)
 	local sent = {}
-	for k,v in ipairs(game.entities) do
+	for k,v in pairs(self.players) do
 		if v.peer then
 			v.peer:send(message)
 			sent[v.peer] = true
@@ -31,70 +35,64 @@ function server:broadcast(signal, payload)
 	end
 end
 
-function server:send(player, signal, payload)
-	local data = signal .. util:pack(payload)
-	player.peer:send(data)
-end
+function server:processPlayerInfo(data, peer)
+	local player = self:getPlayer(peer)
 
-function server:playerJoin(data, peer)
-	local info = util:unpack( data:sub(5) )
-	local name = info[1]
-	local x = game.map.spawnRoom.x * tile.tileSize + game.map.spawnRoom.width * tile.tileSize / 2
-	local y = game.map.spawnRoom.y * tile.tileSize + game.map.spawnRoom.height * tile.tileSize / 2
-
-
-	peer:send("MAP"..game.map:getNetworkedMap())
-
-	local ent = game.entitiesByID[game:addEntity(Player:new(info[2], name))]
-	ent.x = x
-	ent.y = y
-	ent.peer = peer
-	self.players[#self.players + 1] = ent
-
-	peer:send("LOCAL" .. util:pack({ent.id}))
-
-	world:update(ent, x, y)
-
-
-	for k,v in ipairs(game.entities) do
-		local toSend = {type = v.type, name = v.name, x = v.x, y= v.y, health = v.health, id = v.id, xvel = v.xvel, yvel = v.yvel,}
-		if v.owner then toSend["owner"] = v.owner.id end
-		peer:send("SPAWN" .. util:pack(toSend))
+	if player then
+		player.x = data[1]
+		player.y = data[2]
 	end
-end
-
-function server:spawn(entity)
-	local toSend = {type = entity.type, name = entity.name, x = entity.x, y= entity.y, health = entity.health, id = entity.id, xvel = entity.xvel, yvel = entity.yvel}
-	if entity.owner then toSend["owner"] = entity.owner.id end
-	self:broadcast("SPAWN", toSend)
 end
 
 function server:broadcastEntityInfo()
 	local toSend = {}
-
+	
 	for i=1, #game.entities do
 		local ent = game.entities[i]
-		toSend[ent.id] = {x = ent.x, y = ent.y, xvel = ent.xvel, yvel = ent.yvel, health = ent.health}
+		
+		toSend[ent.id] = {type = ent.type, x = ent.x, y = ent.y, health = ent.health}
 	end
 
-	self:broadcast("UPDATE", toSend)
+	self:broadcast('UPDATE', toSend)
 end
 
-function server:processPlayerInfo(data, peer)
+function server:playerJoin(info, peer)
+	local name = info[1]
+	local x = game.map.spawnRoom.x * tile.tileSize + game.map.spawnRoom.width * tile.tileSize / 2
+	local y = game.map.spawnRoom.y * tile.tileSize + game.map.spawnRoom.height * tile.tileSize / 2
+
+	local player = Player:new()
+	player.peer = peer
+	player.x = x
+	player.y = y
+	player.id = game:addEntity(player)
+	world:update(player, x, y)
+	self.players[player.id] = player
+
+	self:send(player, "MAP", game.map:getNetworkedMap())
+	self:send(player, "LOCAL", {player.id})
+
+	for k,v in pairs(game.entities) do
+		local toSend = {id = v.id, type = v.type, name = v.name, x = v.x, y = v.y, health = v.health, xvel = v.xvel, yvel = v.yvel}
+		self:send(player, "SPAWN", toSend)
+	end
+end
+
+function server:spawn(entity)
+	local toSend = {id = entity.id, type = entity.type, name = entity.name, x = entity.x, y = entity.y, health = entity.health, xvel = entity.xvel, yvel = entity.yvel, owner = entity.owner}
+
+	self:broadcast("SPAWN", toSend)
+end
+
+function server:shoot(info, peer)
 	local player = self:getPlayer(peer)
+	if not player then return end
 
-	self.change = {math.max(math.abs(player.x - data.x), self.change[1]), math.max(math.abs(player.y - data.y), self.change[2])}
-
-	game.debug:add("PlayerPosChange", tostring(self.change[1]).."/"..tostring(self.change[2]))
-
-	player.x = data.x
-	player.y = data.y
-	world:update(player, player.x, player.y)
+	game:addEntity(bullet:new(player.id, info.x, info.y, info.xvel, info.yvel))
 end
 
 function server:update(dt)
 	self.lastUpdate = self.lastUpdate + dt
-
 	if self.lastUpdate >= self.updateRate then
 		self.lastUpdate = self.lastUpdate - self.updateRate
 		
@@ -107,11 +105,14 @@ function server:update(dt)
 			if event.type == "receive" then
 				local data = event.data
 				if data:sub(1,4) == "JOIN" then
-					self:playerJoin(data, event.peer)
+					self:playerJoin(util:unpack(data:sub(5)), event.peer)
 				elseif data:sub(1,6) == "UPDATE" then
 					self:processPlayerInfo(util:unpack(data:sub(7)), event.peer)
+				elseif data:sub(1,5) == "SHOOT" then
+					self:shoot(util:unpack(data:sub(6)), event.peer)
 				end
 			elseif event.type == "connect" then
+				print(event.peer)
 				event.peer:send("READY")
 			elseif event.type == "disconnect" then
 				--TODO: remove from game and broadcast the problem

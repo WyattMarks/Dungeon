@@ -11,6 +11,16 @@ player.type = "player"
 player.xvel = 0
 player.yvel = 0
 
+
+local playerMeta = { __index = player }
+
+function player:new()
+	local new = setmetatable({}, playerMeta)
+
+	return new
+end
+
+
 function player:draw()
 	love.graphics.setColor(50,50,205)
 	love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
@@ -22,7 +32,7 @@ function player:draw()
 end
 
 function player:filter(other)
-	if other.owner == self then
+	if other.owner == self.id then
 		return false
 	else
 		return "slide"
@@ -30,7 +40,6 @@ function player:filter(other)
 end
 
 function player:update(dt)
-
 	if game.map.lightWorld and not self.light then 
 		self.light = game.map.lightWorld:newLight(self.x + self.width/2, self.y+self.height/2, 100, 140, 180, 300)
 		self.light:setGlowStrength(0.3)
@@ -47,18 +56,12 @@ function player:update(dt)
 	end
 end
 
-local playerMeta = { __index = player }
-
-function player:new(isLocal, name)
-	return setmetatable({isLocal = isLocal, name = name}, playerMeta)
-end
-
 function player:shoot(x, y)
 	x, y = camera:worldCoords(x,y)
 	local pX, pY = self.x + self.width / 2 - bullet.width / 2, self.y + self.height / 2 - bullet.height / 2
 	local angle = math.atan2(x - pX, y - pY)
-	local xvel = self.bulletSpeed * math.sin(angle)
-	local yvel = self.bulletSpeed * math.cos(angle)
+    local xvel = self.bulletSpeed * math.sin(angle)
+    local yvel = self.bulletSpeed * math.cos(angle)
 
 	if math.abs(xvel + self.xvel) > math.abs(xvel) then
 		xvel = xvel + self.xvel
@@ -68,7 +71,7 @@ function player:shoot(x, y)
 		yvel = yvel + self.yvel
 	end
 
-	local toSend = {owner = self.id, x = pX, y = pY, xvel = xvel, yvel = yvel}
+	local toSend = {x = pX, y = pY, xvel = xvel, yvel = yvel}
 	client:send("SHOOT", toSend)
 end
 
@@ -81,8 +84,7 @@ function player:die()
 	self.x = game.map.spawnRoom.x * tile.tileSize + game.map.spawnRoom.width * tile.tileSize / 2
 	self.y = game.map.spawnRoom.y * tile.tileSize + game.map.spawnRoom.height * tile.tileSize / 2
 	world:update(self, self.x, self.y)
-	self.peer:send("MOVE", {self.x, self.y})
+	server:send(self, "MOVE", {self.x, self.y})
 end
 
 return player
-
