@@ -4,13 +4,14 @@ function join:load()
 	self.joinButton = button:new("Join game", screenWidth / 2 - screenWidth / 8, screenHeight / 2, 100, 30, function()
         game.name = self.nameBox.text
 
-        local ip = self.addressBox.text
+        local ip = self.ipBox.text
 		local port = 1337
-		
+
+
 		if ip:find(":") then
 			local index = ip:find(":")
-			ip = ip:sub(1, index - 1)
 			port = tonumber(ip:sub(index + 1))
+			ip = ip:sub(1, index - 1)
 		end
         
 		client.address = ip

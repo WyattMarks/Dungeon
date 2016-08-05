@@ -1,12 +1,19 @@
 local host = {}
 
 function host:load()
+	self.errors = {}
+
 	self.hostButton = button:new("Host game", screenWidth / 2 - screenWidth / 8, screenHeight / 2, 100, 30, function()
         game.name = self.nameBox.text
 
         local port = tonumber(self.portBox.text)
 
-	
+		if port <= 1025 then
+			self.portBox.text = "1337"
+			self.errors[#self.errors+1] = "Ports 1024 and under are reserved."
+			return
+		end
+
 		client.port = port
 		server.port = port
 		menu:setCurrentScreen('main')
@@ -31,16 +38,50 @@ function host:load()
 	self.backButton.clickColor = 	{100,100,100}
 
     self.portBox = textbox:new("1337", font.small, screenWidth / 2 - screenWidth / 8 - 25 + 20, screenHeight / 12 * 5, 150)
+	self.portBox.errorText = "Ports can only contain numbers." --Little mod of textbox that is number only
 
 	self.portBox.textinput = function(portBox, t)
-		if portBox.active and tonumber(t) then
-        	if not portBox.firstInput then portBox.firstInput = true portBox.text = '' end
-			portBox.text = portBox.text..t
+		if portBox.active then
+			if tonumber(t) then
+        		if not portBox.firstInput then portBox.firstInput = true portBox.text = '' end
+				portBox.text = portBox.text..t
+				
+				for i=#self.errors, 1, -1 do
+					if self.errors[i] == self.portBox.errorText then
+						table.remove(self.errors, i)
+					end
+				end
+			else
+				self.errors[#self.errors + 1] = self.portBox.errorText
+			end
 		end
 	end
 
+	self.portBox.keypressed = function(portBox, key, isrepeat)
+		if key == "backspace" and portBox.active then
+			if not portBox.firstInput then portBox.firstInput = true portBox.text = '' end
+
+			if self.portBox.text ~= "" then
+				for i=#self.errors, 1, -1 do
+					if self.errors[i] == self.portBox.errorText then
+						table.remove(self.errors, i)
+					end
+				end
+			end
+
+			local byteoffset = utf8.offset(portBox.text, -1)
+		
+			if byteoffset then
+				portBox.text = string.sub(portBox.text, 1, byteoffset - 1)
+			end
+		end
+	end
+
+
     self.nameBox = textbox:new("Player"..tostring(math.random(1,10)), font.small, screenWidth / 2 + screenWidth / 8 - 150 + 25 + 20, screenHeight / 12 * 5, 150)
 end
+
+
 
 function host:draw()
 	love.graphics.setColor(255,255,255)
@@ -50,6 +91,16 @@ function host:draw()
 	love.graphics.print(str, screenWidth / 2 - font.large:getWidth(str) / 2, screenHeight / 4)
 
     love.graphics.setFont(font.small)
+
+	str = "Error: " .. ( self.errors[#self.errors] or '' )
+
+	if #self.errors > 0 then
+		love.graphics.setColor(205,50,50)
+
+		love.graphics.print(str, screenWidth / 2 - font.small:getWidth(str) / 2, screenHeight / 3 * 2)
+
+		love.graphics.setColor(255,255,255)
+	end
 
     str = "Port: "
     love.graphics.print(str, self.portBox.x - font.small:getWidth(str), self.portBox.y)
