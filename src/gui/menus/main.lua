@@ -1,24 +1,21 @@
 local main = {}
 
 function main:load()
-	self.font = love.graphics.newImageFont("assets/font.png", " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,!?-+/():;%&`'*#=[]\"")
+	self.font = font.large
 	self.hostButton = button:new("Host game", screenWidth / 2 - screenWidth / 8, screenHeight / 2, 100, 30, function()
-		server:load()
-		game:load()
-		client:load()
+		menu:setCurrentScreen("host")
 	end)
 
-	self.hostButton.font = self.font
+	self.hostButton.font = font.small
 	self.hostButton.color = 		{200,200,200}
 	self.hostButton.hoverColor = 	{150,150,150}
 	self.hostButton.clickColor = 	{100,100,100}
 
 	self.joinButton = button:new("Join game", screenWidth / 2 + screenWidth / 8 - 100, screenHeight / 2, 100, 30, function()
-		game:load()
-		client:load()
+		menu:setCurrentScreen("join")
 	end)
 
-	self.joinButton.font = self.font
+	self.joinButton.font = font.small
 	self.joinButton.color = 		{200,200,200}
 	self.joinButton.hoverColor = 	{150,150,150}
 	self.joinButton.clickColor = 	{100,100,100}
@@ -38,6 +35,12 @@ end
 function main:update( dt )
 	self.hostButton:update(dt)
 	self.joinButton:update(dt)
+end
+
+function main:keypressed(key)
+end
+
+function main:textinput(t)
 end
 
 return main

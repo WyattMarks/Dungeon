@@ -34,7 +34,7 @@ end
 function debug:draw()
 	if not self.on then return end
 	
-	if not self.font then self.font = love.graphics.newFont() end
+	if not self.font then self.font = font.small end
 	
 	love.graphics.setColor(255,255,255)
 	love.graphics.setFont(self.font)

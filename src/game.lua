@@ -16,7 +16,6 @@ function game:load()
 	self.debug = require("src/gui/debug")
 	self.systems = require("src.systems.systems")
 	self.systems:load()
-	self.name = "player" .. tostring(math.random(1,10))
 	
 	camera = Camera(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
 	camera:zoom(2)

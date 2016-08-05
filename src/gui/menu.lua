@@ -4,6 +4,7 @@ menu.currentScreen = {}
 
 function menu:load()
 	button = require("src.gui.button")
+	textbox = require("src.gui.textbox")
 	self:setCurrentScreen("main")
 end
 
@@ -18,6 +19,14 @@ end
 
 function menu:update(dt)
 	self.currentScreen:update(dt)
+end
+
+function menu:textinput(t)
+	self.currentScreen:textinput(t)
+end
+
+function menu:keypressed(key)
+	self.currentScreen:keypressed(key)
 end
 
 

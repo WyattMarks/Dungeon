@@ -35,6 +35,8 @@ function button:draw()
 	end
 	
 	love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
+	
+	love.graphics.setFont(self.font)
 
 	if self.wasDown then
 		love.graphics.setColor(self.textClickColor)

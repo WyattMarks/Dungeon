@@ -9,10 +9,15 @@ client = require("src/network/client")
 require("enet")
 bind = require("src/input/bind")
 util =  require("src/util")
+font = require("src.gui.font")
 
 function love.load()
 	math.randomseed(os.time())
 	screenWidth, screenHeight = love.window.getMode()
+
+	love.graphics.setDefaultFilter("nearest", "nearest")
+
+	font:load()
 
 	menu:load()
 end
@@ -40,6 +45,9 @@ end
 
 function love.keypressed(key)
 	bind:keypressed(key)
+	if not game.running then
+		menu:keypressed(key)
+	end
 end
 
 function love.keyreleased(key)
@@ -52,4 +60,10 @@ end
 
 function love.mousereleased(x, y, button, istouch)
 	bind:mousereleased(x, y, button, istouch)
+end
+
+function love.textinput(t)
+	if not game.running then
+		menu:textinput(t)
+	end
 end
