@@ -124,6 +124,19 @@ function host:update( dt )
 end
 
 function host:keypressed(key)
+
+	if key == "return" then
+		self.hostButton:onClick()
+		return
+	elseif key == "tab" then
+		if self.portBox.active or self.nameBox.active then
+			self.portBox.active = not self.portBox.active
+			self.nameBox.active = not self.nameBox.active
+		end
+	elseif key == "escape" then
+		menu:setCurrentScreen("main")
+	end
+
     self.portBox:keypressed(key)
     self.nameBox:keypressed(key)
 end

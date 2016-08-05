@@ -88,6 +88,19 @@ function join:update( dt )
 end
 
 function join:keypressed(key)
+
+	if key == "return" then
+		self.joinButton:onClick()
+		return
+	elseif key == "tab" then
+		if self.ipBox.active or self.nameBox.active then
+			self.ipBox.active = not self.ipBox.active
+			self.nameBox.active = not self.nameBox.active
+		end
+	elseif key == "escape" then
+		menu:setCurrentScreen("main")
+	end
+
     self.ipBox:keypressed(key)
     self.nameBox:keypressed(key)
 end
