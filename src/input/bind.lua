@@ -15,7 +15,7 @@ end
 
 function bind:removeBind(identifier)
 	for i = #self.binds, 1, -1 do
-	    if self.binds[i].identifier == identifier then
+	    if self.binds[i][1] == identifier then
 	        table.remove(self.binds, i)
 	        return
 	    end
@@ -28,7 +28,7 @@ end
 
 function bind:removeMouseBind(identifier)
 	for i = #self.mouseBinds, 1, -1 do
-	    if self.mouseBinds[i].identifier == identifier then
+	    if self.mouseBinds[i][1] == identifier then
 	        table.remove(self.mouseBinds, i)
 	        return
 	    end
