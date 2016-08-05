@@ -31,6 +31,14 @@ function host:load()
 	self.backButton.clickColor = 	{100,100,100}
 
     self.portBox = textbox:new("1337", font.small, screenWidth / 2 - screenWidth / 8 - 25 + 20, screenHeight / 12 * 5, 150)
+
+	self.portBox.textinput = function(portBox, t)
+		if portBox.active and tonumber(t) then
+        	if not portBox.firstInput then portBox.firstInput = true portBox.text = '' end
+			portBox.text = portBox.text..t
+		end
+	end
+
     self.nameBox = textbox:new("Player"..tostring(math.random(1,10)), font.small, screenWidth / 2 + screenWidth / 8 - 150 + 25 + 20, screenHeight / 12 * 5, 150)
 end
 
