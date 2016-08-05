@@ -49,5 +49,40 @@ function util:distance(x,y,x2,y2)
 	return math.sqrt( (x-x2)^2 + (y-y2)^2 )
 end
 
+function util:printTable(tbl, tabs)
+	tabs = tabs or 0;
+	for k,v in pairs(tbl) do
+		if type(v) ~= "table" then
+			local temp;
+			for i=1, tabs do
+				temp = temp or {};
+				temp[i] = '';
+			end
+			if temp then
+				temp[#temp + 1] = tostring(k)..":";
+				temp[#temp + 1] = v;
+				print(unpack(temp));
+			else
+				print(tostring(k)..":", v);
+			end
+		else
+			local temp;
+			for i=1, tabs do
+				temp = temp or {};
+				temp[i] = '';
+			end
+			if temp then
+				temp[#temp + 1] = tostring(k)..":";
+				print(unpack(temp));
+			else
+				print(tostring(k)..":");
+			end
+			temp = nil;
+			
+			sel:printTable(v, tabs + 1)
+		end
+	end
+end
+
 
 return util;

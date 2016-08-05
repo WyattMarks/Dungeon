@@ -47,6 +47,34 @@ function join:load()
 
     self.ipBox = textbox:new("localhost", font.small, screenWidth / 2 - screenWidth / 8 - 25 + 10, screenHeight / 12 * 5, 150)
     self.nameBox = textbox:new("Player"..tostring(math.random(1,10)), font.small, screenWidth / 2 + screenWidth / 8 - 150 + 25 + 10, screenHeight / 12 * 5, 150)
+
+	bind:addBind("enterText", "return", function(down)
+		if not down and (self.ipBox.active or self.nameBox.active) then
+			self.joinButton:onClick()
+			return
+		end
+	end)
+
+	bind:addBind("tabText", "tab", function(down)
+		if not down then
+			if self.ipBox.active or self.nameBox.active then
+				self.ipBox.active = not self.ipBox.active
+				self.nameBox.active = not self.nameBox.active
+			end
+		end
+	end)
+
+	bind:addBind("escapeExit", "escape", function(down)
+		if not down then
+			menu:setCurrentScreen("main")
+		end
+	end)
+end
+
+function join:unload()
+	bind:removeBind("enterText")
+	bind:removeBind("tabText")
+	bind:removeBind("escapeExit")
 end
 
 function join:draw()
@@ -88,19 +116,6 @@ function join:update( dt )
 end
 
 function join:keypressed(key)
-
-	if key == "return" then
-		self.joinButton:onClick()
-		return
-	elseif key == "tab" then
-		if self.ipBox.active or self.nameBox.active then
-			self.ipBox.active = not self.ipBox.active
-			self.nameBox.active = not self.nameBox.active
-		end
-	elseif key == "escape" then
-		menu:setCurrentScreen("main")
-	end
-
     self.ipBox:keypressed(key)
     self.nameBox:keypressed(key)
 end

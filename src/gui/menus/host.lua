@@ -79,9 +79,35 @@ function host:load()
 
 
     self.nameBox = textbox:new("Player"..tostring(math.random(1,10)), font.small, screenWidth / 2 + screenWidth / 8 - 150 + 25 + 20, screenHeight / 12 * 5, 150)
+
+	bind:addBind("enterText", "return", function(down)
+		if not down and (self.nameBox.active or self.portBox.active) then
+			self.hostButton:onClick()
+			return
+		end
+	end)
+
+	bind:addBind("tabText", "tab", function(down)
+		if not down then
+			if self.portBox.active or self.nameBox.active then
+				self.portBox.active = not self.portBox.active
+				self.nameBox.active = not self.nameBox.active
+			end
+		end
+	end)
+
+	bind:addBind("escapeExit", "escape", function(down)
+		if not down then
+			menu:setCurrentScreen("main")
+		end
+	end)
 end
 
-
+function host:unload()
+	bind:removeBind("enterText")
+	bind:removeBind("tabText")
+	bind:removeBind("escapeExit")
+end
 
 function host:draw()
 	love.graphics.setColor(255,255,255)
@@ -124,19 +150,6 @@ function host:update( dt )
 end
 
 function host:keypressed(key)
-
-	if key == "return" then
-		self.hostButton:onClick()
-		return
-	elseif key == "tab" then
-		if self.portBox.active or self.nameBox.active then
-			self.portBox.active = not self.portBox.active
-			self.nameBox.active = not self.nameBox.active
-		end
-	elseif key == "escape" then
-		menu:setCurrentScreen("main")
-	end
-
     self.portBox:keypressed(key)
     self.nameBox:keypressed(key)
 end

@@ -1,14 +1,16 @@
 local menu = {}
 menu.screens = {}
-menu.currentScreen = {}
 
 function menu:load()
 	button = require("src.gui.button")
 	textbox = require("src.gui.textbox")
-	self:setCurrentScreen("main")
+
+	self.currentScreen = require("src.gui.menus.main")
+	self.currentScreen:load()
 end
 
 function menu:setCurrentScreen(screen)
+	self.currentScreen:unload()
 	self.currentScreen = require("src.gui.menus."..screen)
 	self.currentScreen:load()
 end

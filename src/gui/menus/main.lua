@@ -19,6 +19,17 @@ function main:load()
 	self.joinButton.color = 		{200,200,200}
 	self.joinButton.hoverColor = 	{150,150,150}
 	self.joinButton.clickColor = 	{100,100,100}
+
+	bind:addBind("escapeExit", "escape", function(down)
+		if not down then
+			print('ded')
+			love.event.quit()
+		end
+	end)
+end
+
+function main:unload()
+	bind:removeBind("escapeExit")
 end
 
 function main:draw()
