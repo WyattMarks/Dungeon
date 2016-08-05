@@ -9,6 +9,9 @@ enemy.bulletSpeed = 200
 enemy.fireRate = 1
 enemy.type = "enemy"
 enemy.range = 300
+enemy.targetsPlayers = true
+enemy.firing = true
+enemy.isAI = true
 
 local enemyMeta = { __index = enemy }
 
@@ -54,7 +57,8 @@ end
 function enemy:update(dt)
 
 	if server.hosting then
-		self.lastShoot = (self.lastShoot or 0) + dt
+		--self.lastShoot = (self.lastShoot or 0) + dt
+		--[[
 		self.timer = (self.timer or 0) - dt
 
 		if self.timer <= 0 then
@@ -66,7 +70,8 @@ function enemy:update(dt)
 			self.up = math.random(1,4) == 1
 			self.down = math.random(1,4) == 1
 		end
-
+		
+		
 		if self.lastShoot > self.fireRate then
 			self.lastShoot = self.lastShoot - math.random(self.fireRate-self.fireRate/2, self.fireRate+self.fireRate/2)
 
@@ -86,8 +91,9 @@ function enemy:update(dt)
 				end
 			end
 		end
+		--]]
 
-
+		--[[
 		local xMove, yMove = self.x, self.y
 		if self.right then
 			xMove = xMove + self.speed * dt
@@ -108,6 +114,7 @@ function enemy:update(dt)
 		end
 
 		self.x, self.y, cols, len = world:move(self, xMove, yMove, self.filter)
+		--]]
 	end
 end
 
