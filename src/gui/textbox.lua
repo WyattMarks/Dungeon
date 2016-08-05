@@ -22,7 +22,7 @@ end
 
 function textbox:textinput(t)
 	if self.active then
-        if not self.firstInput then self.firstInput = true self.text = t end
+        if not self.firstInput then self.firstInput = true self.text = '' end
 		self.text = self.text..t
 	end
 end
