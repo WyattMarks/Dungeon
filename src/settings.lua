@@ -4,6 +4,7 @@ local settings = {}
 settings.binds = {
 	shoot = 1,
 	tabMenu = "tab",
+	pause = 'escape',
 	chat = "t",
 	right = 'd',
 	left = 'a',

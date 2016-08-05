@@ -3,8 +3,7 @@ Camera = require("src/thirdparty/camera")
 LightWorld = require("src/thirdparty/light")
 bullet = require("src/entities/bullet")
 enemy = require("src/entities/enemy")
-hud = require("src.gui.hud")
-chatbox = require("src.gui.chatbox")
+
 local game = {}
 game.map = {}
 game.entities = {}
@@ -17,16 +16,18 @@ function game:load()
 	self.bindings:load()
 	self.map = require("src/level/map")
 	self.debug = require("src/gui/debug")
-	chatbox:load()
+	self.hud = require("src.gui.hud")
+	self.chatbox = require("src.gui.chatbox")
+	self.pauseScreen = require("src.gui.pause")
+	self.chatbox:load()	
 	
 	self.systems = {
-        require("src.systems.motion"),
-        require("src.systems.ai.input"),
-        require("src.systems.ai.target"),
-        require("src.systems.player.target"),
-        require("src.systems.firing"),
-    }
-    
+		require("src.systems.motion"),
+		require("src.systems.ai.input"),
+		require("src.systems.ai.target"),
+		require("src.systems.player.target"),
+		require("src.systems.firing"),
+	}
 	camera = Camera(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
 	camera:zoom(2)
 
@@ -35,6 +36,11 @@ function game:load()
 		self.map:generate()
 		self.map:spawnEnemies()
 	end
+end
+
+function game:pause()
+	self.paused = true
+	self.pauseScreen:load()
 end
 
 function game:addEntity(entity, id, onServer)
@@ -111,9 +117,11 @@ function game:draw()
 
 	love.graphics.setColor(255,255,255)
 
-	chatbox:draw()
-	hud:draw()
+	self.chatbox:draw()
+	self.hud:draw()
 	self.debug:draw()
+
+	if self.paused then self.pauseScreen:draw() end
 end
 
 function game:update(dt)
@@ -128,18 +136,20 @@ function game:update(dt)
 		entity:update(dt)
 	end
 	
-	chatbox:update(dt)
-	hud:update(dt)
+	self.chatbox:update(dt)
+	self.hud:update(dt)
 	self.debug:add("FPS", love.timer.getFPS())
 	self.debug:update(dt)
+
+	if self.paused then self.pauseScreen:update(dt) end
 end
 
 function game:keypressed(key)
-	chatbox:keypressed(key)
+	self.chatbox:keypressed(key)
 end
 
 function game:textinput(t)
-	chatbox:textinput(t)
+	self.chatbox:textinput(t)
 end
 
 return game
