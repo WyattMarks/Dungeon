@@ -99,7 +99,6 @@ function client:update(dt)
 end
 
 function client:ping(info)
-	print(info.id)
 	game.entitiesByID[info.id].signal = info.signal
 end
 

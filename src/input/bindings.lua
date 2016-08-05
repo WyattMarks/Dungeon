@@ -30,6 +30,7 @@ function bindings:unload()
 	bind:removeBind("playerLeft")
 	bind:removeBind("playerUp")
 	bind:removeBind("playerDown")
+	bind:removeBind("tabMenu")
 end
 
 
