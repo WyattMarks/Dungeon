@@ -41,7 +41,8 @@ end
 
 function bind:keyreleased(key)
     for k,v in ipairs(self.binds) do
-        if v[2] == key then
+        if v[2] == key and v[4] then
+            print(v[1], false)
             v[3](false);
         end
     end
@@ -50,6 +51,7 @@ end
 function bind:keypressed(key, isrepeat)
     for k,v in ipairs(self.binds) do
         if v[2] == key then
+            v[4] = true
             v[3](true, isrepeat);
         end
     end

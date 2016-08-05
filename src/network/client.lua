@@ -101,7 +101,7 @@ function client:update(dt)
 end
 
 function client:chat(info)
-	chatbox:message(info[1], info[2])
+	game.chatbox:message(info[1], info[2])
 end
 
 function client:ping(info)
