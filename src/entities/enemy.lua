@@ -112,12 +112,7 @@ function enemy:update(dt)
 end
 
 function enemy:die()
-	world:remove(self)
-	for k,v in pairs(game.enemies) do
-		if v == self then 
-			game.enemies[k] = nil
-		end
-	end
+	game:removeEntity(self)
 end
 
 function enemy:draw()

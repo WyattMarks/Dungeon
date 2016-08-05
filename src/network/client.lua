@@ -86,12 +86,20 @@ function client:update(dt)
 				self:updateEntityInfo(util:unpack(data:sub(7)))
 			elseif data:sub(1,4) == "KILL" then
 				self:kill(util:unpack(data:sub(5)))
+			elseif data:sub(1,4) == "MOVE" then
+				self:move(util:unpack(data:sub(5)))
 			end
 		elseif event and event.type == 'disconnect' then 
 			error("Network error: "..tostring(event.data))
 		end
 		event = self.host:service()
 	until not event
+end
+
+function client:move(info)
+	local player = game:getLocalPlayer()
+	player.x = info[1]
+	player.y = info[2]
 end
 
 function client:kill(data)

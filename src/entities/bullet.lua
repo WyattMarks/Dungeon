@@ -5,6 +5,7 @@ bullet.xvel = 0
 bullet.yvel = 0
 bullet.width = 5
 bullet.height = 5
+bullet.damage = 10
 bullet.type = "bullet"
 
 local bulletMeta = {__index = bullet}
@@ -47,7 +48,11 @@ function bullet:update(dt)
 
 		if i == 1 then
 			if server.hosting and hit.health then
-				hit.health = math.max(0, hit.health - 10)
+				hit.health = math.max(0, hit.health - self.damage)
+
+				if hit.health == 0 and hit.die then 
+					hit:die()
+				end
 			end
 
 			game:removeEntity(self)
