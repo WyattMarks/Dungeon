@@ -42,7 +42,6 @@ end
 function bind:keyreleased(key)
     for k,v in ipairs(self.binds) do
         if v[2] == key and v[4] then
-            print(v[1], false)
             v[3](false);
         end
     end

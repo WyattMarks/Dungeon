@@ -22,11 +22,18 @@ function game:load()
 	self.chatbox:load()	
 	
 	self.systems = {
-		require("src.systems.motion"),
-		require("src.systems.ai.input"),
-		require("src.systems.ai.target"),
-		require("src.systems.player.target"),
-		require("src.systems.firing"),
+		update = {
+			require("src.systems.update.motion"),
+			require("src.systems.update.ai.input"),
+			require("src.systems.update.ai.target"),
+			require("src.systems.update.player.target"),
+			require("src.systems.update.firing"),
+			require("src.systems.update.death")
+		}, draw = {
+
+		}, collide = {
+			require("src.systems.collide.bullet")
+		}
 	}
 	camera = Camera(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
 	camera:zoom(2)
@@ -129,8 +136,8 @@ function game:update(dt)
 
 	self.map:update(dt)
 	
-	for _, entity in pairs(self.entities) do
-		for _, system in ipairs(self.systems) do
+	for _, entity in ipairs(self.entities) do
+		for _, system in ipairs(self.systems.update) do
 			system(entity, dt)
 		end
 		entity:update(dt)

@@ -41,45 +41,11 @@ function player:filter(other)
 end
 
 function player:update(dt)
-    --[[
-	if game.map.lightWorld and not self.light then 
-		self.light = game.map.lightWorld:newLight(self.x + self.width/2, self.y+self.height/2, 100, 140, 180, 300)
-		self.light:setGlowStrength(0.3)
-	end
-
-	local xMove, yMove = self.x + self.xvel * dt, self.y + self.yvel * dt
-
-	self.x, self.y, cols, len = world:move(self, xMove, yMove, self.filter)
-	
-	if self.light then self.light:setPosition(self.x+self.width/2, self.y+self.height/2, 1) end
-
-	--]]
 	if game.debug and self.isLocal then 
 		game.debug:add("X/Y", tostring(math.floor( (self.x + self.width / 2) / tile.tileSize)).."/"..tostring(math.floor( (self.y + self.height / 2) / tile.tileSize)))
 	end
 end
 
-function player:shoot(x, y)
-	x, y = camera:worldCoords(x,y)
-	local pX, pY = self.x + self.width / 2 - bullet.width / 2, self.y + self.height / 2 - bullet.height / 2
-	local angle = math.atan2(x - pX, y - pY)
-    local xvel = self.bulletSpeed * math.sin(angle)
-    local yvel = self.bulletSpeed * math.cos(angle)
-
-    -- this makes it hard to aim, my bad
-    --[[
-	if math.abs(xvel + self.xvel) > math.abs(xvel) then
-		xvel = xvel + self.xvel
-	end
-
-	if math.abs(yvel + self.yvel) > math.abs(yvel) then
-		yvel = yvel + self.yvel
-	end
-	--]]
-
-	local toSend = {x = pX, y = pY, xvel = xvel, yvel = yvel}
-	client:send("SHOOT", toSend)
-end
 
 function player:load()
 	world:add(self, self.x, self.y, self.width, self.height)

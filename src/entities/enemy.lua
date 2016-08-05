@@ -55,67 +55,6 @@ function enemy:shoot(x, y)
 end
 
 function enemy:update(dt)
-
-	if server.hosting then
-		--self.lastShoot = (self.lastShoot or 0) + dt
-		--[[
-		self.timer = (self.timer or 0) - dt
-
-		if self.timer <= 0 then
-			local nextMoveDur = math.random(1,4)
-			self.timer = nextMoveDur
-
-			self.right = math.random(1,4) == 1
-			self.left = math.random(1,4) == 1
-			self.up = math.random(1,4) == 1
-			self.down = math.random(1,4) == 1
-		end
-		
-		
-		if self.lastShoot > self.fireRate then
-			self.lastShoot = self.lastShoot - math.random(self.fireRate-self.fireRate/2, self.fireRate+self.fireRate/2)
-
-			local players = {}
-			for k,v in pairs(server.players) do
-				players[#players+1] = {util:distance(self.x, self.y, v.x, v.y), v}
-			end
-
-			table.sort(players, function( b, a ) return a[1] > b[1] end)
-
-			for i=1, #players do
-				local player = players[i][2]
-
-				if self:canSee(player) and players[i][1] < self.range then
-					self:shoot(player.x + player.width / 2, player.y + player.height / 2)
-					break
-				end
-			end
-		end
-		--]]
-
-		--[[
-		local xMove, yMove = self.x, self.y
-		if self.right then
-			xMove = xMove + self.speed * dt
-		elseif self.left then
-			xMove = xMove - self.speed * dt
-		else
-			self.xvel = 0
-		end
-
-		if self.up then
-			yMove = yMove - self.speed * dt
-			self.yvel = -self.speed
-		elseif self.down then
-			yMove = yMove + self.speed * dt
-			self.yvel = self.speed
-		else
-			self.yvel = 0
-		end
-
-		self.x, self.y, cols, len = world:move(self, xMove, yMove, self.filter)
-		--]]
-	end
 end
 
 function enemy:die()
