@@ -1,4 +1,6 @@
 return function (e, dt) 
+	if not e.isLocal and not server.hosting then return false end
+
     if e.cooldown and e.cooldown > 0 then
         e.cooldown = e.cooldown - dt
     elseif e.firing and e.targetX and e.targetY and e.x and e.y and e.bulletSpeed then
@@ -20,8 +22,11 @@ return function (e, dt)
 	    end
 	    --]]
 
-	    -- client:send("SHOOT", {x = pX, y = pY, xvel = xvel, yvel = yvel})
-	    game:addEntity(bullet:new(e.id, pX, pY, xvel, yvel))
+		if e.isLocal then
+	    	client:send("SHOOT", {x = pX, y = pY, xvel = xvel, yvel = yvel})
+		else
+	    	game:addEntity(bullet:new(e.id, pX, pY, xvel, yvel))
+		end
 	
         e.cooldown = (e.cooldown or 0) + (e.fireRate or 0.15)
     end
