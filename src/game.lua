@@ -14,8 +14,13 @@ function game:load()
 	self.bindings:load()
 	self.map = require("src/level/map")
 	self.debug = require("src/gui/debug")
-	self.systems = require("src.systems.systems")
-	self.systems:load()
+	self.systems = {
+        require("src.systems.motion"),
+        require("src.systems.ai.input"),
+        require("src.systems.ai.target"),
+        require("src.systems.player.target"),
+        require("src.systems.firing"),
+    }
 	
 	camera = Camera(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
 	camera:zoom(2)
@@ -109,11 +114,11 @@ function game:update(dt)
 
 	self.map:update(dt)
 	
-	for k,v in pairs(self.entities) do
-		for k,sys in pairs(self.systems) do
-			self.systems[k](v, dt)
+	for _, entity in pairs(self.entities) do
+		for _, system in ipairs(self.systems) do
+			system(entity, dt)
 		end
-		v:update(dt)
+		entity:update(dt)
 	end
 	
 	self.debug:add("FPS", love.timer.getFPS())

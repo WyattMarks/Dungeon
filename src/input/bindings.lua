@@ -4,21 +4,24 @@ local bindings = {}
 function bindings:load()
 
 	bind:addBind("playerRight", settings.binds.right, function(down)
-		game:getLocalPlayer().right = down
+	    local e = game:getLocalPlayer()
+		e.xvel = down and e.speed or 0
 	end)
 	bind:addBind("playerLeft", settings.binds.left, function(down)
-		game:getLocalPlayer().left = down
+	    local e = game:getLocalPlayer()
+		e.xvel = down and -e.speed or 0
 	end)
 	bind:addBind("playerUp", settings.binds.up, function(down)
-		game:getLocalPlayer().up = down
+	    local e = game:getLocalPlayer()
+		e.yvel = down and -e.speed or 0
 	end)
 	bind:addBind("playerDown", settings.binds.down, function(down)
-		game:getLocalPlayer().down = down
+	    local e = game:getLocalPlayer()
+		e.yvel = down and e.speed or 0
 	end)
 	bind:addMouseBind("playerShoot", settings.binds.shoot, function(down, x, y)
-		if down then
-			game:getLocalPlayer():shoot(x, y)
-		end
+		game:getLocalPlayer().firing = down
+		-- if down then game:getLocalPlayer():shoot(x, y) end
 	end)
 	
 end
