@@ -3,6 +3,7 @@ local settings = {}
 
 settings.binds = {
 	shoot = 1,
+	tabMenu = "tab",
 	right = 'd',
 	left = 'a',
 	up = 'w',

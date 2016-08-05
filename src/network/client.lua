@@ -88,12 +88,19 @@ function client:update(dt)
 				self:kill(util:unpack(data:sub(5)))
 			elseif data:sub(1,4) == "MOVE" then
 				self:move(util:unpack(data:sub(5)))
+			elseif data:sub(1,4) == "PING" then
+				self:ping(util:unpack(data:sub(5)))
 			end
 		elseif event and event.type == 'disconnect' then 
 			error("Network error: "..tostring(event.data))
 		end
 		event = self.host:service()
 	until not event
+end
+
+function client:ping(info)
+	print(info.id)
+	game.entitiesByID[info.id].signal = info.signal
 end
 
 function client:move(info)
@@ -118,6 +125,12 @@ function client:spawn(info)
 
 	for k,v in pairs(info) do
 		entity[k] = v
+	end
+
+	if not server.hosting then
+		if entity.type == "player" then
+			game.players[#game.players + 1] = entity
+		end
 	end
 
 	game:addEntity(entity, info.id, true)			

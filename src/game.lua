@@ -3,10 +3,12 @@ Camera = require("src/thirdparty/camera")
 LightWorld = require("src/thirdparty/light")
 bullet = require("src/entities/bullet")
 enemy = require("src/entities/enemy")
+hud = require("src.gui.hud")
 local game = {}
 game.map = {}
 game.entities = {}
 game.entitiesByID = {}
+game.players = {}
 
 function game:load()
 	self.running = true
@@ -101,6 +103,7 @@ function game:draw()
 
 	love.graphics.setColor(255,255,255)
 
+	hud:draw()
 	self.debug:draw()
 end
 
@@ -116,6 +119,7 @@ function game:update(dt)
 		v:update(dt)
 	end
 	
+	hud:update(dt)
 	self.debug:add("FPS", love.timer.getFPS())
 	self.debug:update(dt)
 end

@@ -54,6 +54,25 @@ function server:broadcastEntityInfo()
 	end
 
 	self:broadcast('UPDATE', toSend)
+
+	for i=1, #self.players do
+		local player = self.players[i]
+
+		player.peer:ping()
+
+		local signal = player.peer:round_trip_time()
+		if signal < 75 then
+			signal = 3
+		elseif signal < 200 then
+			signal = 2
+		else
+			signal = 1
+		end
+
+		if player.signal ~= signal then
+			self:broadcast("PING", {id = player.id, signal = signal})
+		end
+	end
 end
 
 function server:playerJoin(info, peer)
@@ -65,9 +84,11 @@ function server:playerJoin(info, peer)
 	player.peer = peer
 	player.x = x
 	player.y = y
+	player.name = name
 	player.id = game:addEntity(player)
 	world:update(player, x, y)
-	self.players[player.id] = player
+	self.players[#self.players + 1] = player
+	game.players[#game.players + 1] = player
 
 	self:send(player, "MAP", game.map:getNetworkedMap())
 	self:send(player, "LOCAL", {player.id})
@@ -75,6 +96,9 @@ function server:playerJoin(info, peer)
 	for k,v in pairs(game.entities) do
 		local toSend = {id = v.id, type = v.type, name = v.name, x = v.x, y = v.y, health = v.health, xvel = v.xvel, yvel = v.yvel}
 		self:send(player, "SPAWN", toSend)
+		if v.signal then
+			self:send(player, "PING", {id = v.id, signal = v.signal})
+		end
 	end
 end
 

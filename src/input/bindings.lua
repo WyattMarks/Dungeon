@@ -2,7 +2,9 @@ local bindings = {}
 
 
 function bindings:load()
-
+	bind:addBind("tabMenu", settings.binds.tabMenu, function(down)
+		hud.tabOpen = down
+	end)
 	bind:addBind("playerRight", settings.binds.right, function(down)
 		game:getLocalPlayer().right = down
 	end)
