@@ -11,6 +11,7 @@ function host:load()
 		if port <= 1025 then
 			self.portBox.text = "1337"
 			self.errors[#self.errors+1] = "Ports 1024 and under are reserved."
+			self.portBox.firstInput = nil
 			return
 		end
 
