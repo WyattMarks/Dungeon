@@ -26,6 +26,7 @@ function join:load()
 		client.address = ip
 		client.port = port
         menu:setCurrentScreen("main")
+		menu.currentScreen:unload()
 
 		game:load()
 		client:load()

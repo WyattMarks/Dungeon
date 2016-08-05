@@ -90,12 +90,18 @@ function client:update(dt)
 				self:move(util:unpack(data:sub(5)))
 			elseif data:sub(1,4) == "PING" then
 				self:ping(util:unpack(data:sub(5)))
+			elseif data:sub(1,4) == "CHAT" then
+				self:chat(util:unpack(data:sub(5)))
 			end
 		elseif event and event.type == 'disconnect' then 
 			error("Network error: "..tostring(event.data))
 		end
 		event = self.host:service()
 	until not event
+end
+
+function client:chat(info)
+	chatbox:message(info[1], info[2])
 end
 
 function client:ping(info)

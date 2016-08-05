@@ -22,7 +22,6 @@ function main:load()
 
 	bind:addBind("escapeExit", "escape", function(down)
 		if not down then
-			print('ded')
 			love.event.quit()
 		end
 	end)

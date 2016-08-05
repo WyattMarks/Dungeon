@@ -4,6 +4,7 @@ LightWorld = require("src/thirdparty/light")
 bullet = require("src/entities/bullet")
 enemy = require("src/entities/enemy")
 hud = require("src.gui.hud")
+chatbox = require("src.gui.chatbox")
 local game = {}
 game.map = {}
 game.entities = {}
@@ -18,7 +19,8 @@ function game:load()
 	self.debug = require("src/gui/debug")
 	self.systems = require("src.systems.systems")
 	self.systems:load()
-	
+	chatbox:load()	
+
 	camera = Camera(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
 	camera:zoom(2)
 
@@ -89,7 +91,7 @@ function game:getLocalPlayer()
 end
 
 function game:draw()
-	---if not self.map.lightWorld then return end
+	--if not self.map.lightWorld then return end
 	camera:attach()
 
 	--self.map.lightWorld:draw(function()
@@ -103,6 +105,7 @@ function game:draw()
 
 	love.graphics.setColor(255,255,255)
 
+	chatbox:draw()
 	hud:draw()
 	self.debug:draw()
 end
@@ -119,9 +122,18 @@ function game:update(dt)
 		v:update(dt)
 	end
 	
+	chatbox:update(dt)
 	hud:update(dt)
 	self.debug:add("FPS", love.timer.getFPS())
 	self.debug:update(dt)
+end
+
+function game:keypressed(key)
+	chatbox:keypressed(key)
+end
+
+function game:textinput(t)
+	chatbox:textinput(t)
 end
 
 return game

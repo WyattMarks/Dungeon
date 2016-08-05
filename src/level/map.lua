@@ -174,7 +174,7 @@ end
 
 function map:generateLightWorld()
 	self.lightWorld = LightWorld({
-		ambient = {10,10,10},
+		ambient = {5,5,5},
 	})
 
 	self.lightWorld.rectangles = {}

@@ -8,6 +8,8 @@ textbox.drawText = ""
 textbox.blinkRate = .5
 textbox.lastBlink = 0
 textbox.blinking = false
+textbox.activeColor = {50,50,50}
+textbox.color = {70,70,70}
 utf8 = require("utf8")
 
 local textboxMeta = {__index = textbox}
@@ -92,9 +94,9 @@ end
 function textbox:draw()
 	love.graphics.setFont(self.font)
 	if self.active then
-		love.graphics.setColor(50,50,50)
+		love.graphics.setColor(self.activeColor)
 	else
-		love.graphics.setColor(70,70,70)
+		love.graphics.setColor(self.color)
 	end
 	love.graphics.rectangle('fill', self.x, self.y, self.width, self.font:getHeight())
 	

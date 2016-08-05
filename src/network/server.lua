@@ -115,6 +115,10 @@ function server:shoot(info, peer)
 	game:addEntity(bullet:new(player.id, info.x, info.y, info.xvel, info.yvel))
 end
 
+function server:chat(info)
+	self:broadcast("CHAT", info)
+end
+
 function server:update(dt)
 	self.lastUpdate = self.lastUpdate + dt
 	if self.lastUpdate >= self.updateRate then
@@ -134,6 +138,8 @@ function server:update(dt)
 					self:processPlayerInfo(util:unpack(data:sub(7)), event.peer)
 				elseif data:sub(1,5) == "SHOOT" then
 					self:shoot(util:unpack(data:sub(6)), event.peer)
+				elseif data:sub(1,4) == "CHAT" then
+					self:chat(util:unpack(data:sub(5)))
 				end
 			elseif event.type == "connect" then
 				print(event.peer)

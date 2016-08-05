@@ -45,7 +45,9 @@ end
 
 function love.keypressed(key)
 	bind:keypressed(key)
-	if not game.running then
+	if game.running then
+		game:keypressed(key)
+	else
 		menu:keypressed(key)
 	end
 end
@@ -63,7 +65,9 @@ function love.mousereleased(x, y, button, istouch)
 end
 
 function love.textinput(t)
-	if not game.running then
+	if game.running then
+		game:textinput(t)
+	else
 		menu:textinput(t)
 	end
 end

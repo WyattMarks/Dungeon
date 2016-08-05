@@ -18,6 +18,7 @@ function host:load()
 		client.port = port
 		server.port = port
 		menu:setCurrentScreen('main')
+		menu.currentScreen:unload()
 
         server:load()
 		game:load()
