@@ -11,17 +11,6 @@ return function (e, dt)
 		local xvel = e.bulletSpeed * math.sin(angle)
 		local yvel = e.bulletSpeed * math.cos(angle)
 
-		-- this makes it hard to aim, my bad
-		--[[
-		if math.abs(xvel + self.xvel) > math.abs(xvel) then
-			xvel = xvel + self.xvel
-		end
-
-		if math.abs(yvel + self.yvel) > math.abs(yvel) then
-			yvel = yvel + self.yvel
-		end
-		--]]
-
 		if e.isLocal then
 			client:send("SHOOT", {x = pX, y = pY, xvel = xvel, yvel = yvel})
 		else

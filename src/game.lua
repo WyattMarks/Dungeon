@@ -30,7 +30,7 @@ function game:load()
 			require("src.systems.update.firing"),
 			require("src.systems.update.death")
 		}, draw = {
-
+			require("src.systems.draw.health")
 		}, collide = {
 			require("src.systems.collide.bullet")
 		}
@@ -115,8 +115,11 @@ function game:draw()
 
 	--self.map.lightWorld:draw(function()
 		self.map:draw()
-		for k,v in pairs(self.entities) do
-			v:draw()
+		for _, entity in ipairs(self.entities) do
+			for _, system in ipairs(self.systems.draw) do
+				system(entity)
+			end
+			entity:draw()
 		end
 	--end)
 

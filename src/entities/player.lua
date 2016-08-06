@@ -4,7 +4,7 @@ player.y = 0
 player.width = 15
 player.height = 20
 player.speed = 192
-player.bulletSpeed = 200
+player.bulletSpeed = 400
 player.fireRate = 0.15
 player.health = 100
 player.name = "player"
@@ -25,11 +25,6 @@ end
 function player:draw()
 	love.graphics.setColor(50,50,205)
 	love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
-
-	love.graphics.setColor(205,50,50)
-	love.graphics.rectangle('fill', self.x, self.y - 10, self.width, 5)
-	love.graphics.setColor(50,205,50)
-	love.graphics.rectangle('fill', self.x, self.y - 10, self.health/100 * self.width, 5)
 end
 
 function player:filter(other)

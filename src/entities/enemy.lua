@@ -5,7 +5,7 @@ enemy.width = 15
 enemy.height = 20
 enemy.health = 100
 enemy.speed = 48
-enemy.bulletSpeed = 200
+enemy.bulletSpeed = 400
 enemy.fireRate = 1
 enemy.type = "enemy"
 enemy.range = 300
@@ -64,11 +64,6 @@ end
 function enemy:draw()
 	love.graphics.setColor(205,50,50)
 	love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
-
-	love.graphics.setColor(205,50,50)
-	love.graphics.rectangle('fill', self.x, self.y - 10, self.width, 5)
-	love.graphics.setColor(50,205,50)
-	love.graphics.rectangle('fill', self.x, self.y - 10, self.health/100 * self.width, 5)
 end
 
 
