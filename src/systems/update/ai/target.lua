@@ -14,7 +14,7 @@ end
 
 return function (e, dt)
 
-    if not e.targetsPlayers then return false end
+    if not server.hosting or not e.targetsPlayers then return false end
 
 	local players = {}
 	for _, player in pairs(server.players) do

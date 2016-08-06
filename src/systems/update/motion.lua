@@ -7,6 +7,8 @@ local function filter(a, b)
 end
 
 return function (e, dt)
+	if e.type ~= "bullet" and not e.isLocal and not server.hosting then return end
+
 	local components = { "xvel", "yvel" }
 	for i=1, #components do
 		if not e[components[i]] then

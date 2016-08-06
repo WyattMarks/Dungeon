@@ -1,5 +1,5 @@
 return function (e, dt)
-    if not (e.isAI and e.speed) then return false end
+    if not server.hosting or not (e.isAI and e.speed) then return false end
 
 	e.timer = (e.timer or 0) - dt
 
