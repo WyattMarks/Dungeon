@@ -29,10 +29,12 @@ return function (e, dt)
 	for i=1, #players do
 		local player = players[i][2]
 
-		if canSee(e, player) and players[i][1] < e.range then
-		    e.targetX = player.x + player.width / 2
-		    e.targetY = player.y + player.height / 2
-			return
+		if players[i][1] < e.range then
+			if canSee(e, player) then
+		    	e.targetX = player.x + player.width / 2
+		    	e.targetY = player.y + player.height / 2
+				return
+			end
 		end
 	end
 	
