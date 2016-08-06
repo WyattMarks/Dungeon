@@ -12,6 +12,7 @@ enemy.range = 300
 enemy.targetsPlayers = true
 enemy.firing = true
 enemy.isAI = true
+enemy.color = {205,50,50}
 
 local enemyMeta = { __index = enemy }
 
@@ -61,10 +62,6 @@ function enemy:die()
 	game:removeEntity(self)
 end
 
-function enemy:draw()
-	love.graphics.setColor(205,50,50)
-	love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
-end
 
 
 

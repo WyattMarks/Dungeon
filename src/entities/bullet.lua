@@ -7,6 +7,7 @@ bullet.width = 5
 bullet.height = 5
 bullet.damage = 10
 bullet.type = "bullet"
+bullet.color = {200,200,200}
 
 local bulletMeta = {__index = bullet}
 
@@ -22,10 +23,6 @@ function bullet:new(owner,x,y,xvel,yvel)
 	return new
 end 
 
-function bullet:draw()
-	love.graphics.setColor(200,200,200)
-	love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
-end
 
 function bullet:update(dt)
 end

@@ -11,6 +11,7 @@ player.name = "player"
 player.type = "player"
 player.xvel = 0
 player.yvel = 0
+player.color = {50,50,205}
 
 
 local playerMeta = { __index = player }
@@ -19,12 +20,6 @@ function player:new()
 	local new = setmetatable({}, playerMeta)
 
 	return new
-end
-
-
-function player:draw()
-	love.graphics.setColor(50,50,205)
-	love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
 end
 
 function player:filter(other)

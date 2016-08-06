@@ -5,13 +5,15 @@ bullet = require("src/entities/bullet")
 enemy = require("src/entities/enemy")
 
 local game = {}
-game.map = {}
-game.entities = {}
-game.entitiesByID = {}
-game.players = {}
+
 
 function game:load()
+	game.entities = {}
+	game.entitiesByID = {}
+	game.players = {}
+
 	self.running = true
+
 	self.bindings = require("src/input/bindings")
 	self.bindings:load()
 	self.map = require("src/level/map")
@@ -30,7 +32,8 @@ function game:load()
 			require("src.systems.update.firing"),
 			require("src.systems.update.death")
 		}, draw = {
-			require("src.systems.draw.health")
+			require("src.systems.draw.health"),
+			require("src.systems.draw.rectangle")
 		}, collide = {
 			require("src.systems.collide.bullet")
 		}
@@ -43,6 +46,10 @@ function game:load()
 		self.map:generate()
 		self.map:spawnEnemies()
 	end
+end
+
+function game:unload()
+	self.map:unload()
 end
 
 function game:pause()
@@ -119,7 +126,6 @@ function game:draw()
 			for _, system in ipairs(self.systems.draw) do
 				system(entity)
 			end
-			entity:draw()
 		end
 	--end)
 
