@@ -49,7 +49,8 @@ function game:load()
 end
 
 function game:unload()
-	self.map:unload()
+	if server.hosting then server:unload() end
+	client:unload()
 end
 
 function game:pause()

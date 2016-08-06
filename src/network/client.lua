@@ -1,9 +1,6 @@
 local client = {}
 client.address = "localhost"
 client.port = 1337
-client.queue = {}
-client.updateRate = .02
-client.lastUpdate = 0
 
 function client:send(signal, payload) 
 	local message = signal..util:pack(payload)
@@ -15,11 +12,20 @@ function client:send(signal, payload)
 end
 
 function client:load()
+	self.going = true
+	self.queue = {}
+	self.updateRate = .02
+	self.lastUpdate = 0
 	self.host = enet.host_create()
 	self.server = self.host:connect(self.address..":"..tostring(self.port))
 	--self.udp:settimeout(0)
 
 	self:send("JOIN", {game.name})
+end
+
+function client:unload()
+	self.going = false
+	self.host:destroy()
 end
 
 function client:updateEntityInfo(data)
@@ -50,6 +56,7 @@ end
 
 
 function client:update(dt)
+	if not self.going then return end 
 	if self.ready then
 		for k,v in pairs(self.queue) do
 			self.server:send(v)

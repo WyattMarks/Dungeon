@@ -1,13 +1,21 @@
 local server = {}
 server.port = 1337
-server.updateRate = .02
-server.lastUpdate = 0
-server.players = {}
+
 
 function server:load()
+	self.updateRate = .02
+	self.lastUpdate = 0
+	self.players = {}
 	self.host = enet.host_create("*:"..tostring(self.port))
 	--self.udp:settimeout(0)
 	self.hosting = true
+end
+
+function server:unload()
+	self.host:destroy()
+	--self.host:__gc()
+	self.hosting = false
+	self.players = {}
 end
 
 function server:getPlayer(peer)

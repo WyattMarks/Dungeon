@@ -19,6 +19,7 @@ function pause:load()
     self.exitButton = button:new("Exit Game", screenWidth / 2 - screenWidth / 8, screenHeight / 2, 100, 30, function()
 		game.paused = false
         game.running = false
+        game:unload()
         menu:setCurrentScreen("main")
 	end)
 
