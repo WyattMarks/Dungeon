@@ -48,20 +48,20 @@ function join:load()
 		local a,b = socket.dns.toip(ip)
 
 
-		if not self:validIP(ip) then
-			self.errors[#self.errors + 1] = "Enter a valid IP address or URL."
-			return
-		else
-			for i=#self.errors, 1, -1 do
-				if self.errors[i] == "Enter a valid IP address or URL." then
-					self.errors[i] = nil
-				end
-			end
-		end
-
 		if b == "host not found" then
 			self.errors[#self.errors + 1] = "Failed to resolve hostname."
 			return
+		else
+			if not self:validIP(ip) then
+				self.errors[#self.errors + 1] = "Enter a valid IP address or URL."
+				return
+			else
+				for i=#self.errors, 1, -1 do
+					if self.errors[i] == "Enter a valid IP address or URL." then
+						self.errors[i] = nil
+					end
+				end
+			end
 		end
 
 		client.address = ip
