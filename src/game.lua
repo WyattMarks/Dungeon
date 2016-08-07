@@ -40,7 +40,7 @@ function game:load(level)
 		}
 	}
 	camera = Camera(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
-	camera:zoom(.2)
+	camera:zoom(2)
 
 	self.map:load()
 	if server.hosting then
