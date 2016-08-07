@@ -41,7 +41,6 @@ function bindings:load()
 			game:pause()
 		end
 	end)
-	
 end
 
 function bindings:unload()
@@ -49,7 +48,9 @@ function bindings:unload()
 	bind:removeBind("playerLeft")
 	bind:removeBind("playerUp")
 	bind:removeBind("playerDown")
+	bind:removeMouseBind("playerShoot")
 	bind:removeBind("tabMenu")
+	bind:removeBind("chat")
 end
 
 

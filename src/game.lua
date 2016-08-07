@@ -7,10 +7,11 @@ enemy = require("src/entities/enemy")
 local game = {}
 
 
-function game:load()
-	game.entities = {}
-	game.entitiesByID = {}
-	game.players = {}
+function game:load(level)
+	self.entities = {}
+	self.entitiesByID = {}
+	self.players = {}
+	self.level = level or 1
 
 	self.running = true
 
@@ -39,12 +40,34 @@ function game:load()
 		}
 	}
 	camera = Camera(love.graphics.getWidth()/2, love.graphics.getHeight()/2)
-	camera:zoom(2)
+	camera:zoom(.2)
 
 	self.map:load()
 	if server.hosting then
 		self.map:generate()
 		self.map:spawnEnemies()
+	end
+end
+
+function game:regenerate()
+	local players = {}
+	if server.hosting then
+		server:broadcast("RELOAD")
+
+		for i=1, #self.players do
+			players[#players + 1] = {self.players[i].name, self.players[i].peer}
+		end
+	end
+
+	self.bindings:unload()
+	self:load(self.level + 1)
+
+	if server.hosting then
+		server.players = {}
+
+		for i=1, #players do
+			server:playerJoin({players[i][1]}, players[i][2])
+		end
 	end
 end
 

@@ -33,7 +33,10 @@ function server:send(player, signal, payload)
 end
 
 function server:broadcast(signal, payload)
-	local message = signal..util:pack(payload)
+	local message = signal
+
+	if payload then message = message .. util:pack(payload) end
+
 	local sent = {}
 	for k,v in pairs(self.players) do
 		if v.peer then

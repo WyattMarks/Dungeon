@@ -99,6 +99,8 @@ function client:update(dt)
 				self:ping(util:unpack(data:sub(5)))
 			elseif data:sub(1,4) == "CHAT" then
 				self:chat(util:unpack(data:sub(5)))
+			elseif data:sub(1, 6) == "RELOAD" then
+				if not server.hosting then game:regenerate() end
 			end
 		elseif event and event.type == 'disconnect' then 
 			error("Network error: "..tostring(event.data))
@@ -119,6 +121,8 @@ function client:move(info)
 	local player = game:getLocalPlayer()
 	player.x = info[1]
 	player.y = info[2]
+
+	world:update(player, player.x, player.y)
 end
 
 function client:kill(data)
