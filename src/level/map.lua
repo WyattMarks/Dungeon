@@ -154,8 +154,6 @@ function map:draw()
 	if self.loaded then
 		love.graphics.setColor(255,255,255)
 		love.graphics.draw(self.spriteBatch, 0, 0)
-
-		love.graphics.rectangle('line', 0, 0, self.width * 40, self.height * 40)
 	end
 end
 
