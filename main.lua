@@ -20,6 +20,8 @@ function love.load()
 	font:load()
 
 	menu:load()
+
+	settings:load()
 end
 
 function love.update(dt)

@@ -16,6 +16,15 @@ function host:load()
 			return
 		end
 
+		settings.preferences.name = self.nameBox.text
+		settings.preferences.port = port
+
+		if self.nameBox.orignal then
+			settings.preferences.name = "default"
+		end
+
+		settings:save()
+
 		client.port = port
 		server.port = port
 		menu:setCurrentScreen('main')
@@ -81,7 +90,25 @@ function host:load()
 	end
 
 
-    self.nameBox = textbox:new("Player"..tostring(math.random(1,10)), font.small, screenWidth / 2 + screenWidth / 8 - 150 + 25 + 20, screenHeight / 12 * 5, 150)
+
+
+    self.nameBox = textbox:new(settings.preferences.name, font.small, screenWidth / 2 + screenWidth / 8 - 150 + 25 + 20, screenHeight / 12 * 5, 150)
+
+	if self.nameBox.text == "default" then
+		self.nameBox.orignal = true
+		local num = math.random(1,168)
+		local count = 0
+
+		local file = love.filesystem.read("assets/names")
+
+		for line in file:gmatch"[^\n]+" do
+			count = count + 1
+			if count == num then
+				self.nameBox.text = line
+				break
+			end
+		end	
+	end
 
 	bind:addBind("enterText", "return", function(down)
 		if not down and (self.nameBox.active or self.portBox.active) then

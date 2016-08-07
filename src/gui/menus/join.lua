@@ -1,6 +1,10 @@
 local join = {}
 
 function join:validIP(str)
+	if str == "localhost" then
+		return true
+	end
+
 	if not str:find(".", 1, true) then
 		return false
 	end
@@ -65,6 +69,17 @@ function join:load()
 			end
 		end
 
+
+		settings.preferences.name = self.nameBox.text
+		settings.preferences.host = ip..":"..tostring(port)
+
+		if self.nameBox.orignal then
+			settings.preferences.name = "default"
+		end
+
+		settings:save()
+
+
 		client.address = ip
 		client.port = port
         menu:setCurrentScreen("main")
@@ -88,8 +103,31 @@ function join:load()
 	self.backButton.hoverColor = 	{150,150,150}
 	self.backButton.clickColor = 	{100,100,100}
 
-    self.ipBox = textbox:new("localhost", font.small, screenWidth / 2 - screenWidth / 8 - 25 + 10, screenHeight / 12 * 5, 150)
-    self.nameBox = textbox:new("Player"..tostring(math.random(1,10)), font.small, screenWidth / 2 + screenWidth / 8 - 150 + 25 + 10, screenHeight / 12 * 5, 150)
+    self.ipBox = textbox:new(settings.preferences.host, font.small, screenWidth / 2 - screenWidth / 8 - 25 + 10, screenHeight / 12 * 5, 150)
+    self.nameBox = textbox:new(settings.preferences.name, font.small, screenWidth / 2 + screenWidth / 8 - 150 + 25 + 10, screenHeight / 12 * 5, 150)
+
+	if self.nameBox.text == "default" then
+		self.nameBox.orignal = true
+		local num = math.random(1,168)
+		local count = 0
+
+		local file = love.filesystem.read("assets/names")
+
+		for line in file:gmatch"[^\n]+" do
+			count = count + 1
+			if count == num then
+				self.nameBox.text = line
+				break
+			end
+		end	
+	end
+
+	if self.ipBox.text:find(":") then
+		local i = self.ipBox.text:find(":")
+		if self.ipBox.text:sub(i+1) == "1337" then
+			self.ipBox.text = self.ipBox.text:sub(1, i-1)
+		end
+	end
 
 	bind:addBind("enterText", "return", function(down)
 		if not down and (self.ipBox.active or self.nameBox.active) then

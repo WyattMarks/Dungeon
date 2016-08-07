@@ -2,7 +2,14 @@ local util = {}
 
 local bitser = require("src.thirdparty.bitser")
 
-function util:pack(data)
+function util:pack(data, dropFunctions)
+	if dropFunctions then
+		for k,v in pairs(data) do
+			if type(v) == "function" then
+				data[k] = nil
+			end
+		end
+	end
 	--return Tserial.pack(data, false, false)
 	return (bitser.dumps(data))
 end

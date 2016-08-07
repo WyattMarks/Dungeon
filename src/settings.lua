@@ -12,6 +12,12 @@ settings.binds = {
 	down = 's',
 }
 
+settings.preferences = {
+	name = 'default',
+	port = 1337,
+	host = 'localhost:1337'
+}
+
 function settings:load()
 	if not love.filesystem.isFile("dungeon.settings") then
 		return false
@@ -32,11 +38,11 @@ function settings:load()
 		end
 	end
 	
-	debug:print("Loaded dungeon.settings")
+	print("Loaded dungeon.settings")
 end
 
 function settings:save()
-	love.filesystem.write("dungeon.settings", util:pack(self))
+	love.filesystem.write("dungeon.settings", util:pack(self, true))
 end
 
 return settings
