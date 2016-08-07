@@ -6,6 +6,8 @@ map.rooms = {}
 map.halls = {}
 map.height = 0
 map.width = 0 
+map.horizontalBorder = 16
+map.verticalBorder = 9
 
 function map:load()
 	self.tiles = {}
@@ -69,7 +71,7 @@ function map:generate()
 		end
 	end
 
-	self.spriteBatch = love.graphics.newSpriteBatch(tile.texture, #self.tiles * #self.tiles[2])
+	self.spriteBatch = love.graphics.newSpriteBatch(tile.texture, (#self.tiles + 4) * (#self.tiles[2] + 4))
 
 	for x=1, #self.tiles do
 		for y=1, #self.tiles[2] do
@@ -86,6 +88,56 @@ function map:generate()
 	self.height = #self.tiles[2]
 	self.spawnRoom = self.rooms[math.random(1,#self.rooms)]
 	self.loaded = true
+
+	self.borderTiles = {}
+
+	--Left side
+	for x=-self.borderSize, -1 do
+		self.borderTiles[x] = self.borderTiles[x] or {}
+		for y=-2, self.height + 2 do
+			self.borderTiles[x][y] = tile:new("brick")
+			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
+			self.borderTiles[x][y].x = x
+			self.borderTiles[x][y].y = y
+			world:add(self.borderTiles[x][y], x * tile.tileSize, y * tile.tileSize, tile.tileSize, tile.tileSize)
+		end
+	end
+
+	--Right side
+	for x=self.width + 1, self.borderSize + self.width do
+		self.borderTiles[x] = self.borderTiles[x] or {}
+		for y=-2, self.height + 2 do
+			self.borderTiles[x][y] = tile:new("brick")
+			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
+			self.borderTiles[x][y].x = x
+			self.borderTiles[x][y].y = y
+			world:add(self.borderTiles[x][y], x * tile.tileSize, y * tile.tileSize, tile.tileSize, tile.tileSize)
+		end
+	end
+
+	--Top
+	for x=1, self.width do
+		self.borderTiles[x] = self.borderTiles[x] or {}
+		for y = -self.borderSize, -1 do
+			self.borderTiles[x][y] = tile:new("brick")
+			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
+			self.borderTiles[x][y].x = x
+			self.borderTiles[x][y].y = y
+			world:add(self.borderTiles[x][y], x * tile.tileSize, y * tile.tileSize, tile.tileSize, tile.tileSize)
+		end
+	end
+
+	--Bottom
+	for x=1, self.width do
+		for y = self.height + 1, self.height + self.borderSize do
+			self.borderTiles[x][y] = tile:new("brick")
+			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
+			self.borderTiles[x][y].x = x
+			self.borderTiles[x][y].y = y
+			world:add(self.borderTiles[x][y], x * tile.tileSize, y * tile.tileSize, tile.tileSize, tile.tileSize)
+		end
+	end
+
 	--self:generateLightWorld()
 end
 
