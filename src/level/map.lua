@@ -6,8 +6,8 @@ map.rooms = {}
 map.halls = {}
 map.height = 0
 map.width = 0 
-map.horizontalBorder = 16
-map.verticalBorder = 9
+map.horizontalBorder = 8
+map.verticalBorder = 5
 
 function map:load()
 	self.tiles = {}
@@ -30,9 +30,9 @@ function map:generateBorder()
 	self.borderTiles = {}
 
 	--Left side
-	for x=-self.borderSize, -1 do
+	for x=-self.horizontalBorder + 1, 0 do
 		self.borderTiles[x] = self.borderTiles[x] or {}
-		for y=-2, self.height + 2 do
+		for y=-self.verticalBorder, self.height + self.verticalBorder do
 			self.borderTiles[x][y] = tile:new("brick")
 			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
 			self.borderTiles[x][y].x = x
@@ -42,9 +42,9 @@ function map:generateBorder()
 	end
 
 	--Right side
-	for x=self.width + 1, self.borderSize + self.width do
+	for x=self.width + 1, self.horizontalBorder + self.width do
 		self.borderTiles[x] = self.borderTiles[x] or {}
-		for y=-2, self.height + 2 do
+		for y=-self.verticalBorder, self.height + self.verticalBorder do
 			self.borderTiles[x][y] = tile:new("brick")
 			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
 			self.borderTiles[x][y].x = x
@@ -56,7 +56,7 @@ function map:generateBorder()
 	--Top
 	for x=1, self.width do
 		self.borderTiles[x] = self.borderTiles[x] or {}
-		for y = -self.borderSize, -1 do
+		for y = -self.verticalBorder + 1, 0 do
 			self.borderTiles[x][y] = tile:new("brick")
 			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
 			self.borderTiles[x][y].x = x
@@ -67,7 +67,7 @@ function map:generateBorder()
 
 	--Bottom
 	for x=1, self.width do
-		for y = self.height + 1, self.height + self.borderSize do
+		for y = self.height + 1, self.height + self.verticalBorder do
 			self.borderTiles[x][y] = tile:new("brick")
 			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
 			self.borderTiles[x][y].x = x
@@ -122,7 +122,7 @@ function map:generate()
 		end
 	end
 
-	self.spriteBatch = love.graphics.newSpriteBatch(tile.texture, (#self.tiles + 4) * (#self.tiles[2] + 4))
+	self.spriteBatch = love.graphics.newSpriteBatch(tile.texture, (#self.tiles + self.horizontalBorder * 2) * (#self.tiles[2] + self.verticalBorder * 2))
 
 	for x=1, #self.tiles do
 		for y=1, #self.tiles[2] do
@@ -135,11 +135,10 @@ function map:generate()
 		end
 	end
 
-	self:generateBorder()
-
 	self.width = #self.tiles
 	self.height = #self.tiles[2]
 	self.spawnRoom = self.rooms[math.random(1,#self.rooms)]
+	self:generateBorder()
 	self.loaded = true
 	--self:generateLightWorld()
 end
