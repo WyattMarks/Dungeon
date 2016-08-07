@@ -42,7 +42,7 @@ function map:generateBorder()
 	end
 
 	--Right side
-	for x=self.width + 1, self.horizontalBorder + self.width do
+	for x=self.width + 1, self.horizontalBorder + self.width - 1 do
 		self.borderTiles[x] = self.borderTiles[x] or {}
 		for y=-self.verticalBorder, self.height + self.verticalBorder do
 			self.borderTiles[x][y] = tile:new("brick")
@@ -122,7 +122,7 @@ function map:generate()
 		end
 	end
 
-	self.spriteBatch = love.graphics.newSpriteBatch(tile.texture, (#self.tiles + self.horizontalBorder * 2) * (#self.tiles[2] + self.verticalBorder * 2))
+	self.spriteBatch = love.graphics.newSpriteBatch(tile.texture, (#self.tiles + self.horizontalBorder * 2 + 1) * (#self.tiles[2] + self.verticalBorder * 2))
 
 	for x=1, #self.tiles do
 		for y=1, #self.tiles[2] do
@@ -154,6 +154,8 @@ function map:draw()
 	if self.loaded then
 		love.graphics.setColor(255,255,255)
 		love.graphics.draw(self.spriteBatch, 0, 0)
+
+		love.graphics.rectangle('line', 0, 0, self.width * 40, self.height * 40)
 	end
 end
 
