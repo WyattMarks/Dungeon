@@ -2,6 +2,7 @@ local host = {}
 
 function host:load()
 	self.errors = {}
+	self.bgImage = love.graphics.newImage('assets/background.png')
 
 	self.hostButton = button:new("Host game", screenWidth / 2 - screenWidth / 8, screenHeight / 2, 100, 30, function()
         game.name = self.nameBox.text
@@ -113,6 +114,9 @@ end
 
 function host:draw()
 	love.graphics.setColor(255,255,255)
+
+	love.graphics.draw(self.bgImage, 0, 0)
+
 	love.graphics.setFont(font.large)
 
 	local str = "Host Game"

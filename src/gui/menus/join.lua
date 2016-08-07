@@ -29,6 +29,7 @@ function join:validIP(str)
 end
 
 function join:load()
+	self.bgImage = love.graphics.newImage("assets/background.png")
 	self.errors = {}
 
 	self.joinButton = button:new("Join game", screenWidth / 2 - screenWidth / 8, screenHeight / 2, 100, 30, function()
@@ -121,6 +122,9 @@ end
 
 function join:draw()
 	love.graphics.setColor(255,255,255)
+
+	love.graphics.draw(self.bgImage, 0, 0)
+
 	love.graphics.setFont(font.large)
 
 	local str = "Join Game"
