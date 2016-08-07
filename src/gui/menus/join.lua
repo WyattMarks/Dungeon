@@ -1,5 +1,33 @@
 local join = {}
 
+function join:validIP(str)
+	if not str:find(".", 1, true) then
+		return false
+	end
+
+	if str:len() < 4 then
+		return false
+	end
+
+	local index = 0
+
+	while str:find('.', index + 1, true) do 
+		local i, startPos, endPos = str:find('.', index + 1, true)
+		index = i
+
+		if i == 1 then
+			return false
+		end
+
+		if str:sub(index + 1, index + 1) == "." then 
+			return false
+		end
+	end
+
+
+	return true
+end
+
 function join:load()
 	self.errors = {}
 
@@ -20,11 +48,22 @@ function join:load()
 		local a,b = socket.dns.toip(ip)
 
 
+		if not self:validIP(ip) then
+			self.errors[#self.errors + 1] = "Enter a valid IP address or URL."
+			return
+		else
+			for i=#self.errors, 1, -1 do
+				if self.errors[i] == "Enter a valid IP address or URL." then
+					self.errors[i] = nil
+				end
+			end
+		end
+
 		if b == "host not found" then
 			self.errors[#self.errors + 1] = "Failed to resolve hostname."
 			return
 		end
-        
+
 		client.address = ip
 		client.port = port
         menu:setCurrentScreen("main")
