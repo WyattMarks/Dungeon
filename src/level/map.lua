@@ -26,6 +26,57 @@ function map:spawnEnemies()
 	end
 end
 
+function map:generateBorder()
+	self.borderTiles = {}
+
+	--Left side
+	for x=-self.borderSize, -1 do
+		self.borderTiles[x] = self.borderTiles[x] or {}
+		for y=-2, self.height + 2 do
+			self.borderTiles[x][y] = tile:new("brick")
+			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
+			self.borderTiles[x][y].x = x
+			self.borderTiles[x][y].y = y
+			world:add(self.borderTiles[x][y], x * tile.tileSize, y * tile.tileSize, tile.tileSize, tile.tileSize)
+		end
+	end
+
+	--Right side
+	for x=self.width + 1, self.borderSize + self.width do
+		self.borderTiles[x] = self.borderTiles[x] or {}
+		for y=-2, self.height + 2 do
+			self.borderTiles[x][y] = tile:new("brick")
+			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
+			self.borderTiles[x][y].x = x
+			self.borderTiles[x][y].y = y
+			world:add(self.borderTiles[x][y], x * tile.tileSize, y * tile.tileSize, tile.tileSize, tile.tileSize)
+		end
+	end
+
+	--Top
+	for x=1, self.width do
+		self.borderTiles[x] = self.borderTiles[x] or {}
+		for y = -self.borderSize, -1 do
+			self.borderTiles[x][y] = tile:new("brick")
+			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
+			self.borderTiles[x][y].x = x
+			self.borderTiles[x][y].y = y
+			world:add(self.borderTiles[x][y], x * tile.tileSize, y * tile.tileSize, tile.tileSize, tile.tileSize)
+		end
+	end
+
+	--Bottom
+	for x=1, self.width do
+		for y = self.height + 1, self.height + self.borderSize do
+			self.borderTiles[x][y] = tile:new("brick")
+			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
+			self.borderTiles[x][y].x = x
+			self.borderTiles[x][y].y = y
+			world:add(self.borderTiles[x][y], x * tile.tileSize, y * tile.tileSize, tile.tileSize, tile.tileSize)
+		end
+	end
+end
+
 function map:generate()
 	Dungeon:generate()
 	local top, left, bottom, right = 0,0,0,0
@@ -84,60 +135,12 @@ function map:generate()
 		end
 	end
 
+	self:generateBorder()
+
 	self.width = #self.tiles
 	self.height = #self.tiles[2]
 	self.spawnRoom = self.rooms[math.random(1,#self.rooms)]
 	self.loaded = true
-
-	self.borderTiles = {}
-
-	--Left side
-	for x=-self.borderSize, -1 do
-		self.borderTiles[x] = self.borderTiles[x] or {}
-		for y=-2, self.height + 2 do
-			self.borderTiles[x][y] = tile:new("brick")
-			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
-			self.borderTiles[x][y].x = x
-			self.borderTiles[x][y].y = y
-			world:add(self.borderTiles[x][y], x * tile.tileSize, y * tile.tileSize, tile.tileSize, tile.tileSize)
-		end
-	end
-
-	--Right side
-	for x=self.width + 1, self.borderSize + self.width do
-		self.borderTiles[x] = self.borderTiles[x] or {}
-		for y=-2, self.height + 2 do
-			self.borderTiles[x][y] = tile:new("brick")
-			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
-			self.borderTiles[x][y].x = x
-			self.borderTiles[x][y].y = y
-			world:add(self.borderTiles[x][y], x * tile.tileSize, y * tile.tileSize, tile.tileSize, tile.tileSize)
-		end
-	end
-
-	--Top
-	for x=1, self.width do
-		self.borderTiles[x] = self.borderTiles[x] or {}
-		for y = -self.borderSize, -1 do
-			self.borderTiles[x][y] = tile:new("brick")
-			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
-			self.borderTiles[x][y].x = x
-			self.borderTiles[x][y].y = y
-			world:add(self.borderTiles[x][y], x * tile.tileSize, y * tile.tileSize, tile.tileSize, tile.tileSize)
-		end
-	end
-
-	--Bottom
-	for x=1, self.width do
-		for y = self.height + 1, self.height + self.borderSize do
-			self.borderTiles[x][y] = tile:new("brick")
-			self.borderTiles[x][y].spriteID = self.spriteBatch:add(self.borderTiles[x][y].quad, x * tile.tileSize, y * tile.tileSize )
-			self.borderTiles[x][y].x = x
-			self.borderTiles[x][y].y = y
-			world:add(self.borderTiles[x][y], x * tile.tileSize, y * tile.tileSize, tile.tileSize, tile.tileSize)
-		end
-	end
-
 	--self:generateLightWorld()
 end
 
@@ -222,6 +225,8 @@ function map:loadFromNetworkedMap(toLoad)
 
 	self.loaded = true
 	--self:generateLightWorld()
+
+	self:generateBorder()
 end
 
 function map:generateLightWorld()
