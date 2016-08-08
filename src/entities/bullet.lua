@@ -8,6 +8,7 @@ bullet.height = 5
 bullet.damage = 10
 bullet.type = "bullet"
 bullet.color = {200,200,200}
+bullet.rectDraw = true
 
 local bulletMeta = {__index = bullet}
 

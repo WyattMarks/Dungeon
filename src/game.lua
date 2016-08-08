@@ -3,11 +3,13 @@ Camera = require("src/thirdparty/camera")
 LightWorld = require("src/thirdparty/light")
 bullet = require("src/entities/bullet")
 enemy = require("src/entities/enemy")
+animation = require("src.animation")
 
 local game = {}
 
 
 function game:load(level)
+	Player:loadAssets()
 	self.entities = {}
 	self.entitiesByID = {}
 	self.players = {}
@@ -31,10 +33,12 @@ function game:load(level)
 			require("src.systems.update.ai.target"),
 			require("src.systems.update.player.target"),
 			require("src.systems.update.firing"),
-			require("src.systems.update.death")
+			require("src.systems.update.death"),
+			require("src.systems.update.animated"),
 		}, draw = {
 			require("src.systems.draw.health"),
-			require("src.systems.draw.rectangle")
+			require("src.systems.draw.rectangle"),
+			require("src.systems.draw.animated"),
 		}, collide = {
 			require("src.systems.collide.bullet")
 		}

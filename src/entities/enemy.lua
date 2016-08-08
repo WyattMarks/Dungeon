@@ -13,6 +13,7 @@ enemy.targetsPlayers = true
 enemy.firing = true
 enemy.isAI = true
 enemy.color = {205,50,50}
+enemy.rectDraw = true
 
 local enemyMeta = { __index = enemy }
 

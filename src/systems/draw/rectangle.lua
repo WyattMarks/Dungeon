@@ -1,5 +1,5 @@
 return function(e)
-	local components = { "color", "width", "height", "x", "y" }
+	local components = { "rectDraw", "color", "width", "height", "x", "y" }
 	for i=1, #components do
 		if not e[components[i]] then
 			return false

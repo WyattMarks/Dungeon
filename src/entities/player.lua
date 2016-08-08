@@ -12,9 +12,14 @@ player.type = "player"
 player.xvel = 0
 player.yvel = 0
 player.color = {50,50,205}
-
+player.animated = true
 
 local playerMeta = { __index = player }
+
+function player:loadAssets()
+	self.idle = animation:new("assets/player_idle.png", 4, .5, 7, 13)
+	self.curAnim = self.idle
+end
 
 function player:new()
 	local new = setmetatable({}, playerMeta)
