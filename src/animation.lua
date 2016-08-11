@@ -2,8 +2,8 @@ local animation = {}
 animation.image = {}
 animation.curFrame = 1
 animation.frames = 4
-animation.frameWidth = 7
-animation.frameHeight = 13
+animation.frameWidth = 9
+animation.frameHeight = 15
 animation.frameLength = .5
 animation.quads = {}
 animation.time = 0
@@ -22,17 +22,21 @@ function animation:new(image, frames, frameLength, frameWidth, frameHeight)
     new:genQuads()
     new.spritebatch = love.graphics.newSpriteBatch(new.image, 1)
     new.spriteID = new.spritebatch:add(self.quads[1])
+    new.spritebatch:set(new.spriteID, new.quads[1], 1, 1)
 
 	return new
 end
 
 function animation:genQuads()
+    local framesPerRow = self.image:getWidth() / self.frameWidth
+    print(self.image:getWidth(), self.frameWidth, framesPerRow)
     for i=1, self.frames do
-        local framesPerRow = (self.image:getWidth() / (self.frameWidth + 2))
-        local y = math.floor( math.max(0, i-1) / framesPerRow )
+        local y = (math.ceil(i / framesPerRow) - 1) * self.frameHeight + 1
+        local x = (i-1) * self.frameWidth + 1
 
-        print(i, (i-1) * self.frameWidth + 1, y * (self.frameHeight + 2) + 1)
-        self.quads[i] = love.graphics.newQuad((i-1) * self.frameWidth + i * 2 - 1, y * (self.frameHeight + 2) + 1, self.frameWidth, self.frameHeight, self.image:getDimensions())
+        print(x,y)
+
+        self.quads[i] = love.graphics.newQuad(x, y, self.frameWidth, self.frameHeight, self.image:getDimensions())
     end
 end
 
@@ -50,9 +54,11 @@ function animation:update(dt)
     end
 end
 
-function animation:draw(x, y)
+function animation:draw(x, y, xscale, yscale)
+    xscale = self.scale * (xscale or 1)
+    yscale = self.scale * (yscale or 1)
     love.graphics.setColor(255,255,255)
-    love.graphics.draw(self.spritebatch, x - 1, y - 1, 0, self.scale, self.scale)
+    love.graphics.draw(self.spritebatch, x, y, 0, xscale, yscale)
 end
 
 

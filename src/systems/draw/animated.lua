@@ -6,5 +6,12 @@ return function(e)
 		end
 	end
 
-    e.curAnim:draw(e.x, e.y)
+	local xscale = 1
+	local x = e.x
+	if e.xvel < 0 then
+		xscale = -1
+		x = x + e.curAnim.frameWidth * e.curAnim.scale
+	end
+
+    e.curAnim:draw(x, e.y, xscale)
 end

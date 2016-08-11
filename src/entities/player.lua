@@ -17,7 +17,7 @@ player.animated = true
 local playerMeta = { __index = player }
 
 function player:loadAssets()
-	self.idle = animation:new("assets/player_idle.png", 4, .5, 7, 13)
+	self.idle = animation:new("assets/player_idle.png", 4, .5, 9, 15)
 	self.curAnim = self.idle
 end
 
