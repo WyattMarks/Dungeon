@@ -1,8 +1,8 @@
 local player = {}
 player.x = 0
 player.y = 0
-player.width = 15
-player.height = 20
+player.width = 14
+player.height = 26
 player.speed = 192
 player.bulletSpeed = 400
 player.fireRate = 0.15

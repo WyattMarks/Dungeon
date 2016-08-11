@@ -64,7 +64,7 @@ function animation:draw(x, y, xscale, yscale)
 	end
 
 	love.graphics.setColor(255,255,255)
-	love.graphics.draw(self.spritebatch, x-1, y-1, 0, xscale, yscale)
+	love.graphics.draw(self.spritebatch, x-self.scale, y-self.scale, 0, xscale, yscale)
 end
 
 
