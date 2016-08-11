@@ -13,12 +13,13 @@ player.xvel = 0
 player.yvel = 0
 player.color = {50,50,205}
 player.animated = true
+player.animations = {}
 
 local playerMeta = { __index = player }
 
 function player:loadAssets()
-	self.idle = animation:new("assets/player_idle.png", 4, .5, 9, 15)
-	self.curAnim = self.idle
+	self.animations["idle"] = animation:new("assets/player_idle.png", 4, .5, 9, 15)
+	self.curAnim = self.animations.idle
 end
 
 function player:new()

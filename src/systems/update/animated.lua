@@ -1,5 +1,5 @@
 return function(e, dt)
-	local components = { "animated"}
+	local components = { "animated", "x", "y"}
 	for i=1, #components do
 		if not e[components[i]] then
 			return false
