@@ -30,12 +30,10 @@ end
 
 function animation:genQuads()
 	local framesPerRow = self.image:getWidth() / self.frameWidth
-	print(self.image:getWidth(), self.frameWidth, framesPerRow)
+
 	for i=1, self.frames do
 		local y = (math.ceil(i / framesPerRow) - 1) * self.frameHeight + 1
 		local x = (i-1) * self.frameWidth + 1
-
-		print(x,y)
 
 		self.quads[i] = love.graphics.newQuad(x, y, self.frameWidth, self.frameHeight, self.image:getDimensions())
 	end
